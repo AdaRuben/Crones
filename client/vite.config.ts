@@ -13,4 +13,9 @@ export default defineConfig({
       '@': root,
     } as AliasOptions,
   },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:3000',
+    },
+  },
 });
