@@ -18,7 +18,7 @@ class AuthController {
       return res.status(200).json({ accessToken, user });
     } catch (error) {
       console.log(error);
-      
+
       if (error.message === 'Duplicate entry') {
         return res.status(400).json({ message: error.message });
       }
@@ -32,7 +32,7 @@ class AuthController {
       if (!userData.phoneNumber || !userData.password) {
         return res.status(400).json({ message: 'phoneNumber and password are required' });
       }
-      const user = await AuthService.signup(userData);
+      const user = await AuthService.signin(userData);
       const { accessToken, refreshToken } = generateTokens({ user });
       res.cookie('refreshToken', refreshToken, cookieConfig.refreshToken);
       return res.status(200).json({ accessToken, user });
