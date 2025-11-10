@@ -144,6 +144,21 @@ class OrderController {
       }
     }
   }
+
+  static async updateOrderDriver(req, res) {
+    try {
+      const { driverId } = req.body;
+      const updatedOrder = await OrderService.updateOrderDriver(req.params.id, driverId);
+      res.status(200).json(updatedOrder);
+    } catch (error) {
+      console.log(error);
+      if (error.message === 'Order not found') {
+        res.status(404).json({ error: 'Order not found' });
+      } else {
+        res.status(500).json({ error: 'Server error' });
+      }
+    }
+  }
 }
 
 module.exports = OrderController;
