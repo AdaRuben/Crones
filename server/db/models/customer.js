@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: DataTypes.STRING,
       phoneNumber: DataTypes.STRING,
+      hashpass: DataTypes.STRING,
     },
     {
       sequelize,

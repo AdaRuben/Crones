@@ -1,8 +1,11 @@
-const AuthRouter = require('express').Router();
-const AuthController = require('../controllers/auth.controller');
+const express = require('express');
+const authController = require('../controllers/auth.controller');
 
-AuthRouter.post('/auth/telegram/link', AuthController.createLink);
-AuthRouter.post('/auth/request-otp', AuthController.requestOtp);
-AuthRouter.post('/auth/verify-otp', AuthController.verifyOtp);
+const authRouter = express.Router();
 
-module.exports = AuthRouter;
+authRouter.post('/signup', authController.signup);
+authRouter.post('/signin', authController.signin);
+authRouter.get('/refresh', authController.refresh);
+authRouter.delete('/signout', authController.signout);
+
+module.exports = authRouter;
