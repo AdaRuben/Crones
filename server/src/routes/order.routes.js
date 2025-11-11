@@ -15,4 +15,7 @@ orderRouter.patch('/:id/customerComment', OrderController.updateOrderCustomerCom
 orderRouter.patch('/:id/adminComment', OrderController.updateOrderAdminComment);
 orderRouter.patch('/:id/totalCost', OrderController.updateOrderTotalCost);
 
+orderRouter.patch('/:id/driver', OrderController.updateOrderDriver);
+
+
 module.exports = orderRouter;

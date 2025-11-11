@@ -1,8 +1,16 @@
 const { Order } = require('../../db/models');
 
+const { Customer } = require('../../db/models');
+const { Driver } = require('../../db/models');
+
 class OrderService {
   static async getAllOrders() {
-    return Order.findAll();
+    return Order.findAll({
+      include: [
+        { model: Customer, attributes: ['name', 'phoneNumber'] },
+        { model: Driver, attributes: ['name', 'phoneNumber'] },
+      ],
+    });
   }
 
   static async createOrder(order) {
@@ -10,7 +18,13 @@ class OrderService {
   }
 
   static async getOrderById(id) {
-    return Order.findByPk(id);
+
+    return Order.findByPk(id, {
+      include: [
+        { model: Customer, attributes: ['name', 'phoneNumber'] },
+        { model: Driver, attributes: ['name', 'phoneNumber'] },
+      ],
+    });
   }
 
   static async updateOrder(id, order) {
@@ -70,6 +84,20 @@ class OrderService {
       throw new Error('Order not found');
     }
     return order.update({ totalCost });
+  }
+
+  static async updateOrderDriver(id, driverId) {
+    const order = await Order.findByPk(id);
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    const driver = await Driver.findByPk(driverId);
+    if (!driver) {
+      throw new Error('Driver not found');
+    }
+
+    return order.update({ driverId });
   }
 }
 
