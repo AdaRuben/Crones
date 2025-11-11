@@ -10,10 +10,10 @@ import {
 } from '../../entities/maps/slice/MapSlices';
 import { fetchGeocode, fetchSuggestions } from '../../entities/maps/thunks/MapThunks';
 import { MAP_CENTER, MOSCOW_BOUNDS, geocodeByCoords } from '../../entities/maps/api/MapApi';
-import { useAppDispatch, useAppSelector } from '../../shared/hooks';
-import './MapPage.css';
+import { useAppDispatch, useAppSelector } from '../../shared/api/hooks';
+import './MainPage.css';
 
-export default function MapPage(): React.JSX.Element {
+export default function MainPage(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const { activePoint, from, to, sheetExpanded, suggestions, suggestVisible, routeInfo } =
     useAppSelector((state) => state.map);
@@ -139,11 +139,9 @@ export default function MapPage(): React.JSX.Element {
     <div className="app">
       <div ref={mapRef} className="map" />
 
-      <section className={`bottom-sheet ${sheetExpanded ? 'expanded' : ''}`}>
-        <button type="button" className="sheet-handle" onClick={() => dispatch(toggleSheet())} />
-
+      <section className={'bottom-sheet'}>
         <header>
-          <div className="title">Поездка</div>
+          <div className="title">Вызов эвакуатора</div>
           {routeInfo && (
             <div className="route-info">
               <span>{routeInfo.distance}</span>
@@ -173,15 +171,16 @@ export default function MapPage(): React.JSX.Element {
             {suggestVisible && suggestions.length > 0 && activePoint === 'from' && (
               <ul className="suggest-list">
                 {suggestions.map((item) => (
-                  <li key={item.value} onMouseDown={() => handleSelectSuggestion('from')(item.value)}>
+                  <li
+                    key={item.value}
+                    onMouseDown={() => handleSelectSuggestion('from')(item.value)}
+                  >
                     {item.displayName}
                   </li>
                 ))}
               </ul>
             )}
           </div>
-
-          <button type="button" className="swap" onClick={() => dispatch(swapPoints())} aria-label="Поменять местами" />
 
           <div className="input-wrapper">
             <label className={activePoint === 'to' ? 'active' : ''}>
@@ -199,24 +198,31 @@ export default function MapPage(): React.JSX.Element {
               />
             </label>
 
-            {suggestVisible && suggestions.length > 0 && activePoint === 'to' && (
-              <ul className="suggest-list">
-                {suggestions.map((item) => (
-                  <li key={item.value} onMouseDown={() => handleSelectSuggestion('to')(item.value)}>
-                    {item.displayName}
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
         </div>
+            <label 
+            className={activePoint === 'from' ? 'active' : ''}
+            >
+              Комментарий к заказу
+              <input
+                value={from.address}
+                // placeholder="Откуда забрать?"
+                onFocus={handleInputFocus('from')}
+                onChange={(event) => handleInputChange('from')(event.target.value)}
+                onBlur={(event) => handleInputBlur('from')(event.target.value)}
+                onKeyDown={(event) =>
+                  event.key === 'Enter' &&
+                  handleSelectSuggestion('from')((event.target as HTMLInputElement).value)
+                }
+              />
+            </label>
 
         <footer>
           <button type="button" className="secondary" onClick={() => dispatch(clearRoute())}>
             Очистить
           </button>
           <button type="button" className="primary">
-            Заказать такси
+            Заказать
           </button>
         </footer>
       </section>
