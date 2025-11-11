@@ -13,7 +13,7 @@ class AuthService {
 
     const plainUser = user.get();
 
-    delete plainUser.password_hash;
+    delete plainUser.hashpass;
 
     return plainUser;
   }
@@ -29,7 +29,7 @@ class AuthService {
       throw new Error('Invalid phoneNumber or password');
     }
     const plainUser = user.get();
-    delete plainUser.password_hash;
+    delete plainUser.hashpass;
     return plainUser;
   }
 }

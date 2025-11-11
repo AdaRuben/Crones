@@ -2,7 +2,7 @@
 
 /** @type {import('sequelize-cli').Seed} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     await queryInterface.bulkInsert(
       'Orders',
       [
@@ -56,7 +56,7 @@ module.exports = {
     );
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.bulkDelete('Orders', null, {});
   },
 };

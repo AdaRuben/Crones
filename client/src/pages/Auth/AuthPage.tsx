@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Card, Typography, Space, message } from 'antd';
 import { UserOutlined, PhoneOutlined, LockOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router';
 import { useAppDispatch } from '@/shared/api/hooks';
 import { signIn, signUp } from '../../entities/regs/thunks/thunks';
 import { UserLoginSchema, UserRegisterSchema } from '../../entities/regs/types/types';
@@ -17,6 +18,7 @@ export default function AuthPage(): React.JSX.Element {
   const [formSignup] = Form.useForm();
   const [formSignin] = Form.useForm();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   // Форматирование телефона
   const formatPhone = (value: string): string => {
@@ -46,6 +48,7 @@ export default function AuthPage(): React.JSX.Element {
       const parsed = UserRegisterSchema.parse(cleanValues);
       await dispatch(signUp(parsed)).unwrap();
       message.success('Регистрация успешна!');
+      navigate('/');
     } catch (error: any) {
       if (error.errorFields) {
         // Ошибки валидации AntD
@@ -92,7 +95,6 @@ export default function AuthPage(): React.JSX.Element {
           {mode === 'signup' && (
             <Form form={formSignup} layout="vertical" onFinish={onSignup} className="auth-form">
               <Form.Item
-                // label="Имя"
                 name="name"
                 rules={[{ required: true, message: 'Введите имя' }]}
                 className="auth-form-item"
@@ -133,7 +135,6 @@ export default function AuthPage(): React.JSX.Element {
               </Form.Item>
 
               <Form.Item
-                // label="Пароль"
                 name="password"
                 rules={[
                   { required: true, message: 'Введите пароль' },
@@ -150,7 +151,6 @@ export default function AuthPage(): React.JSX.Element {
               </Form.Item>
 
               <Form.Item
-                // label="Подтвердите пароль"
                 name="confirmPassword"
                 dependencies={['password']}
                 rules={[
