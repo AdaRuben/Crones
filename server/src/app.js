@@ -6,7 +6,9 @@ const cookieParser = require('cookie-parser');
 
 const adminAuthRouter = require('./routes/adminAuth.routes');
 const orderRouter = require('./routes/order.routes');
+
 const AuthRouter = require('./routes/auth.router');
+
 
 const app = express();
 
@@ -18,6 +20,8 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.use('/api/auth', adminAuthRouter);
 app.use('/api/orders', orderRouter);
+
 app.use('/api/auth', AuthRouter);
+
 
 module.exports = app;
