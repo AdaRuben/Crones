@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Card, Typography, Space, message } from 'antd';
 import { UserOutlined, PhoneOutlined, LockOutlined } from '@ant-design/icons';
-import { useAppDispatch } from '@/shared/hooks';
+import { useAppDispatch } from '../../shared/api/hooks';
 import { signIn, signUp } from '../../entities/regs/thunks/thunks';
 import { UserLoginSchema, UserRegisterSchema } from '../../entities/regs/types/types';
 import './AuthPage.css';

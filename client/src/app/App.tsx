@@ -5,7 +5,7 @@ import { store } from './store/store';
 import React from 'react';
 import AuthPage from '@/pages/Auth/AuthPage';
 
-import React from 'react';
+
 import { BrowserRouter } from 'react-router';
 import AppRouter from './routes/AppRouter';
 
