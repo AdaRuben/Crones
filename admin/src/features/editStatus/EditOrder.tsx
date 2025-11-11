@@ -1,27 +1,66 @@
-import { ordernewSchema } from '@/entities/order/model/schema';
-import { editOrder } from '@/entities/order/model/thunks';
+import { useEffect, useState } from 'react';
+import { Button, Select } from 'antd';
 import { useAppDispatch } from '@/shared/hooks';
-import type { Order } from '@/entities/order/model/type'
-import React from 'react'
+import type { Order } from '@/entities/order/model/type';
+import { setStatus } from '@/entities/order/model/slice';
+import { editOrder } from '@/entities/order/model/thunks';
 
-import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
-import { Avatar, Card, Flex, Switch } from 'antd';
+type EditOrderProps = {
+  editing: Order | null;
+  setVisibleEdit: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-export default function EditOrder({setVisibleEdit, editing}: {setVisibleEdit: React.Dispatch<React.SetStateAction<boolean>>, editing: Order | null}): React.JSX.Element {
-
+export default function EditOrder({
+  editing,
+  setVisibleEdit,
+}: EditOrderProps): React.JSX.Element | null {
   const dispatch = useAppDispatch();
+  const [status, setLocalStatus] = useState<Order['status']>('new');
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) :void =>  {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget));
-    const validData = ordernewSchema.parse(data);
+  useEffect(() => {
+    if (editing) {
+      setLocalStatus(editing.status);
+    }
+  }, [editing]);
 
-    void dispatch(editOrder({id: editing.id, order: validData}));
+  if (!editing) return null;
 
-    setVisibleEdit(false);
-  }
+  const handleStatusChange = (nextStatus: Order['status']) => {
+    setLocalStatus(nextStatus);
+    dispatch(setStatus({ id: editing.id, status: nextStatus }));
+  };
+
+  const handleSave = async () => {
+    const { id, ...rest } = editing;
+    try {
+      await dispatch(
+        editOrder({
+          id,
+          order: { ...rest, status },
+        })
+      ).unwrap();
+      setVisibleEdit(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
-    <>gg</>
-  )
+    <div className="edit-order">
+      <Select
+        className="statusList"
+        value={status}
+        style={{ width: 200 }}
+        onChange={handleStatusChange}
+      >
+        <Select.Option value="new">Новый</Select.Option>
+        <Select.Option value="in process">В процессе</Select.Option>
+        <Select.Option value="finished">Завершен</Select.Option>
+        <Select.Option value="cancelled">Отменен</Select.Option>
+      </Select>
+      <Button type="primary" onClick={handleSave}>
+        Сохранить
+      </Button>
+    </div>
+  );
 }

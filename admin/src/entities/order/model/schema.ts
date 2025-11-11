@@ -15,8 +15,8 @@ export const orderSchema = z.object({
     createdAt: z.string(),
 });
 
-
-
-
 export const ordernewSchema = orderSchema.omit({id: true});
 
+export const editOrderSchema = z.object({
+    status: z.string(),
+})

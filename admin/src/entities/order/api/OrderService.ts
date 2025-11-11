@@ -19,15 +19,15 @@ class OrderService {
 }
 
   static async editOrder(id: Order['id'], order: newOrder): Promise<Order> {
-    try {
-      const res = await axios.put(`/api/cards/${id.toString()}`, order); 
-      return orderSchema.parse(res.data);
-    } catch (error) {
-      if (error instanceof Error) {
-        console.log(error.message);
-      }
-      throw error;
+  try {
+    const res = await axiosInstance.put(`/orders/${id.toString()}`, order); 
+    return orderSchema.parse(res.data);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error.message);
     }
+    throw error;
+  }
 }
 
 }
