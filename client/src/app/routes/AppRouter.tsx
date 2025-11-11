@@ -5,6 +5,7 @@ import Layout from '../Layout';
 import MainPage from '@/pages/MainPage/MainPage';
 import AboutPage from '@/pages/about/AboutPage';
 import ContactsPage from '@/pages/contacts/ContactsPage';
+import AuthPage from '@/pages/Auth/AuthPage';
 // import ProtectedRoute from '@/shared/lib/ProtectedRoute';
 
 export default function AppRouter(): React.JSX.Element {
@@ -25,7 +26,7 @@ export default function AppRouter(): React.JSX.Element {
       <Route element={<Layout />}>
         <Route path="/" element={<MainPage />} />
         {/* <Route element={<ProtectedRoute isAllowed={userStatus !== 'logged'} redirectTo="/" />}> */}
-        {/* <Route path="/signin" element={<SigninPage />} /> */}
+        <Route path="/signin" element={<AuthPage />} />
         {/* </Route> */}
         {/* <Route element={<ProtectedRoute isAllowed={userStatus === 'logged'} redirectTo="/" />}> */}
         <Route path="/about" element={<AboutPage />} />

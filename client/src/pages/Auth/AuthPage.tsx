@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Card, Typography, Space, message } from 'antd';
 import { UserOutlined, PhoneOutlined, LockOutlined } from '@ant-design/icons';
-import { useAppDispatch } from '@/shared/hooks';
+import { useAppDispatch } from '@/shared/api/hooks';
 import { signIn, signUp } from '../../entities/regs/thunks/thunks';
 import { UserLoginSchema, UserRegisterSchema } from '../../entities/regs/types/types';
 import './AuthPage.css';
@@ -92,7 +92,7 @@ export default function AuthPage(): React.JSX.Element {
           {mode === 'signup' && (
             <Form form={formSignup} layout="vertical" onFinish={onSignup} className="auth-form">
               <Form.Item
-                label="Имя"
+                // label="Имя"
                 name="name"
                 rules={[{ required: true, message: 'Введите имя' }]}
                 className="auth-form-item"
@@ -106,7 +106,7 @@ export default function AuthPage(): React.JSX.Element {
               </Form.Item>
 
               <Form.Item
-                label="Номер телефона"
+                // label="Номер телефона"
                 name="phoneNumber"
                 initialValue="+7 "
                 rules={[
@@ -133,7 +133,7 @@ export default function AuthPage(): React.JSX.Element {
               </Form.Item>
 
               <Form.Item
-                label="Пароль"
+                // label="Пароль"
                 name="password"
                 rules={[
                   { required: true, message: 'Введите пароль' },
@@ -143,14 +143,14 @@ export default function AuthPage(): React.JSX.Element {
               >
                 <Input.Password
                   prefix={<LockOutlined className="auth-icon" />}
-                  placeholder="••••••••"
+                  placeholder="Пароль"
                   size="large"
                   className="auth-input"
                 />
               </Form.Item>
 
               <Form.Item
-                label="Подтвердите пароль"
+                // label="Подтвердите пароль"
                 name="confirmPassword"
                 dependencies={['password']}
                 rules={[
@@ -168,7 +168,7 @@ export default function AuthPage(): React.JSX.Element {
               >
                 <Input.Password
                   prefix={<LockOutlined className="auth-icon" />}
-                  placeholder="••••••••"
+                  placeholder="Подтвердите пароль"
                   size="large"
                   className="auth-input"
                 />
