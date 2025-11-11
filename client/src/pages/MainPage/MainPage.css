@@ -13,45 +13,32 @@ body,
 
 .app {
   position: relative;
-  height: 100%;
+  height: 100vh;
   overflow: hidden;
   background: #f2f4f7;
+  margin: 0;
+  padding: 0;
 }
 
 .map {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
 }
 
 .bottom-sheet {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 20px;
   background: #fff;
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -12px 40px rgba(15, 37, 68, 0.12);
-  padding: 16px 20px 24px;
+  padding: 16px 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   transition: transform 0.3s ease;
   transform: translateY(calc(100% - 220px));
-}
-
-.bottom-sheet.expanded {
-  transform: translateY(0);
-}
-
-.sheet-handle {
-  width: 48px;
-  height: 5px;
-  border-radius: 999px;
-  background: #d7dbe3;
-  border: none;
-  align-self: center;
-  margin-bottom: 8px;
-  cursor: pointer;
 }
 
 header {
@@ -73,14 +60,14 @@ header {
 }
 
 .form {
-  display: grid;
-  grid-template-columns: 1fr 40px 1fr;
-  gap: 12px;
-  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
 }
 
 .input-wrapper {
   position: relative;
+  width: 40vw;
 }
 
 label {
@@ -89,7 +76,7 @@ label {
   padding: 8px 12px;
   display: flex;
   flex-direction: column;
-  font-size: 12px;
+  font-size: 10px;
   color: #6b7280;
   transition: box-shadow 0.2s ease;
 }
@@ -102,29 +89,10 @@ label:focus-within {
 input {
   border: none;
   background: transparent;
-  font-size: 16px;
+  font-size: 13px;
   color: #111;
   margin-top: 4px;
   outline: none;
-}
-
-.swap {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  border: none;
-  background: #f4f6fb;
-  cursor: pointer;
-}
-
-.swap::before {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 100%;
-  mask: url('data:image/svg+xml,%3Csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cpath d=\"M7.41 7.84L6 9.25 9.75 13 6 16.75 7.41 18.16 12.57 13 7.41 7.84ZM16.59 5.84L11.43 11 16.59 16.16 18 14.75 14.25 11 18 7.25 16.59 5.84Z\" fill=\"black\"/%3E%3C/svg%3E')
-    center/24px no-repeat;
-  background-color: #111;
 }
 
 footer {
