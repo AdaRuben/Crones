@@ -1,39 +1,72 @@
-// src/controllers/auth.controller.js
 const AuthService = require('../services/auth.service');
-const bot = require('../telegraf/bot');
+const cookieConfig = require('../configs/cookie.config');
+const generateTokens = require('../utils/generateTokens');
+const jwt = require('jsonwebtoken');
 
-async function createLink(req, res) {
-  try {
-    const { phoneNumber } = req.body;
-    const botUsername = process.env.TELEGRAM_BOT_USERNAME;
-    const data = await AuthService.createLinkDeepLink({ phoneNumber, botUsername });
-    res.json(data);
-  } catch (e) {
-    res.status(400).json({ error: e.message });
+class AuthController {
+  static async signup(req, res) {
+    try {
+      const userData = req.body;
+      if (!userData.name || !userData.phoneNumber || !userData.password) {
+        return res
+          .status(400)
+          .json({ message: 'Name, phoneNumber and password are required' });
+      }
+      const user = await AuthService.signup(userData);
+      const { accessToken, refreshToken } = generateTokens({ user });
+      res.cookie('refreshToken', refreshToken, cookieConfig.refreshToken);
+      return res.status(200).json({ accessToken, user });
+    } catch (error) {
+      console.log(error);
+
+      if (error.message === 'Duplicate entry') {
+        return res.status(400).json({ message: error.message });
+      }
+      return res.status(500).json({ message: error.message });
+    }
+  }
+
+  static async signin(req, res) {
+    try {
+      const userData = req.body;
+      if (!userData.phoneNumber || !userData.password) {
+        return res.status(400).json({ message: 'phoneNumber and password are required' });
+      }
+      const user = await AuthService.signin(userData);
+      const { accessToken, refreshToken } = generateTokens({ user });
+      res.cookie('refreshToken', refreshToken, cookieConfig.refreshToken);
+      return res.status(200).json({ accessToken, user });
+    } catch (error) {
+      if (error.message === 'Invalid phoneNumber or password') {
+        return res.status(400).json({ message: error.message });
+      }
+      return res.status(500).json({ message: error.message });
+    }
+  }
+
+  static async signout(req, res) {
+    res.clearCookie('refreshToken');
+    return res.status(200).json({ message: 'Logged out successfully' });
+  }
+
+  static async refresh(req, res) {
+    try {
+      const oldRefreshToken = req.cookies.refreshToken;
+      if (!oldRefreshToken) {
+        return res.status(401).json({ message: 'Refresh token is required' });
+      }
+      const { user } = jwt.verify(oldRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+      const { accessToken, refreshToken } = generateTokens({ user });
+      res.cookie('refreshToken', refreshToken, cookieConfig.refreshToken);
+      return res.status(200).json({ accessToken, user });
+    } catch (error) {
+      console.log(error);
+      if (error.message === 'TokenExpiredError') {
+        return res.status(401).json({ message: error.message });
+      }
+      return res.status(500).json({ message: error.message });
+    }
   }
 }
 
-async function requestOtp(req, res) {
-  try {
-    const { phoneNumber } = req.body;
-    const sendOtp = (chatId, code) =>
-      bot.telegram.sendMessage(chatId, `Ваш одноразовый код: ${code}\nДействует 5 минут.`);
-    const data = await AuthService.requestOtp({ phoneNumber, sendOtp });
-    res.json(data);
-  } catch (e) {
-    const status = e.code === 'NOT_LINKED' ? 409 : 400;
-    res.status(status).json({ error: e.message, code: e.code });
-  }
-}
-
-async function verifyOtp(req, res) {
-  try {
-    const { phoneNumber, code } = req.body;
-    const data = await AuthService.verifyOtp({ phoneNumber, code });
-    res.json(data);
-  } catch (e) {
-    res.status(400).json({ error: e.message });
-  }
-}
-
-module.exports = { createLink, requestOtp, verifyOtp };
+module.exports = AuthController;
