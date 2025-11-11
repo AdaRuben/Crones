@@ -1,4 +1,5 @@
 const { Order } = require('../../db/models');
+
 const { Customer } = require('../../db/models');
 const { Driver } = require('../../db/models');
 
@@ -17,6 +18,7 @@ class OrderService {
   }
 
   static async getOrderById(id) {
+
     return Order.findByPk(id, {
       include: [
         { model: Customer, attributes: ['name', 'phoneNumber'] },

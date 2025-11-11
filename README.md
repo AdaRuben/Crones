@@ -1,2 +1,0 @@
-# Crones
-FinalProject
