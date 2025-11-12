@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import mapReducer from '../../entities/maps/slice/MapSlices';
-// import mapMetaReducer from '../../entities/maps/slice/MetaSlice';
+import authReducer from '../../entities/regs/slice/slice';
+import ordersReducer from '../../entities/orders/model/slice';
 
 export const store = configureStore({
   reducer: {
     map: mapReducer,
-    // mapMeta: mapMetaReducer,
+    auth: authReducer,
+    orders: ordersReducer,
   },
 });
 

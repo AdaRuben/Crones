@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       totalCost: DataTypes.DECIMAL,
       status: DataTypes.ENUM('new', 'in process', 'finished', 'cancelled'),
       isPaid: DataTypes.BOOLEAN,
-      vehicle: DataTypes.STRING,
+      vehicle: DataTypes.ENUM('Кроссовер', 'Седан'),
       customerComment: DataTypes.TEXT,
       adminComment: DataTypes.TEXT,
       finishedAt: DataTypes.DATE,
