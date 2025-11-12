@@ -8,7 +8,7 @@ module.exports = {
       [
         {
           customerId: 1,
-          driverId: 1,
+          driverId: null,
           from: 'Москва',
           to: 'Красногорск',
           totalCost: 1500.75,

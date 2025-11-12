@@ -13,7 +13,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          name: 'Елена Кузнецова',
+          name: 'Александр Ворона',
           phoneNumber: '+79162223344',
           createdAt: new Date(),
           updatedAt: new Date(),

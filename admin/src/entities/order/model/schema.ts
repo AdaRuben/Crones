@@ -3,6 +3,7 @@ import z from "zod";
 export const orderSchema = z.object({
     id: z.number(),
     customerId: z.number(),
+    driverId: z.number().nullable().optional(),
     from: z.string(),
     to: z.string(),
     totalCost: z.string(),
@@ -28,4 +29,5 @@ export const orderAllSchema = z.object({
     isPaid: z.boolean(),    
     vehicle: z.string(),
     adminComment: z.string().nullable(),
+    driverId: z.number().nullable().optional(),
 });

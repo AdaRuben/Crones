@@ -2,7 +2,7 @@ import { orderAllSchema } from '@/entities/order/model/schema';
 import { editOrder } from '@/entities/order/model/thunks';
 import { useAppDispatch } from '@/shared/hooks';
 import type { Order } from '@/entities/order/model/type';
-import { Button, Input, InputNumber, Space, Switch } from 'antd';
+import { Button, Input, InputNumber, Space, Switch, Select, App } from 'antd';
 import React, { useState } from 'react';
 
 export default function EditPost({
@@ -14,6 +14,7 @@ export default function EditPost({
 }): React.JSX.Element | null {
   const dispatch = useAppDispatch();
   const [isPaid, setIsPaid] = useState(editing?.isPaid ?? false);
+  const { notification } = App.useApp();
 
   if (!editing) return null;
 
@@ -104,9 +105,11 @@ export default function EditPost({
     console.log('Отправляем данные:', orderData);
     
     await dispatch(editOrder({ id: editing.id, order: orderData })).unwrap();
+    notification.success({ message: 'Заказ успешно обновлён' });
     setVisibleEdit(false);
   } catch (err) {
     console.error('Не удалось обновить заказ:', err);
+    notification.error({ message: 'Не удалось обновить заказ' });
   }
 };
 
@@ -131,7 +134,20 @@ export default function EditPost({
         </label>
         <label>
           Тип кузова:
-          <Input name="vehicle" defaultValue={editing.vehicle} />
+          <Select
+            style={{ width: '100%' }}
+            defaultValue={editing.vehicle}
+            onChange={(value) => {
+              // Mirror Select value to a hidden input so FormData picks it up
+              const hidden = document.getElementById('vehicle-hidden') as HTMLInputElement | null;
+              if (hidden) hidden.value = value;
+            }}
+            options={[
+              { label: 'Внедорожник', value: 'Внедорожник' },
+              { label: 'Седан/Кроссовер', value: 'Седан/Кроссовер' },
+            ]}
+          />
+          <input id="vehicle-hidden" name="vehicle" type="hidden" defaultValue={editing.vehicle} />
         </label>
         <label>
           Примечание администратора:

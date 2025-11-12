@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Select } from 'antd';
+import { Button, Select, App } from 'antd';
 import { useAppDispatch } from '@/shared/hooks';
 import type { Order } from '@/entities/order/model/type';
 import { setStatus } from '@/entities/order/model/slice';
@@ -16,6 +16,7 @@ export default function EditStatus({
 }: EditOrderProps): React.JSX.Element | null {
   const dispatch = useAppDispatch();
   const [status, setLocalStatus] = useState<Order['status']>('new');
+  const { notification } = App.useApp();
 
   useEffect(() => {
     if (editing) {
@@ -26,6 +27,14 @@ export default function EditStatus({
   if (!editing) return null;
 
   const handleStatusChange = (nextStatus: Order['status']) => {
+    if (nextStatus === 'finished' && !editing.isPaid) {
+      notification.error({ message: 'Нельзя завершить неоплаченный заказ.' });
+      return;
+    }
+    if (editing.status === 'finished' && nextStatus === 'new') {
+      notification.error({ message: 'Завершенный заказ нельзя перевести в статус Новый.' });
+      return;
+    }
     setLocalStatus(nextStatus);
     dispatch(setStatus({ id: editing.id, status: nextStatus }));
   };
@@ -39,9 +48,11 @@ export default function EditStatus({
           order: { ...rest, status },
         })
       ).unwrap();
+      notification.success({ message: 'Статус заказа обновлен' });
       setVisibleEdit(false);
     } catch (error) {
       console.error(error);
+      notification.error({ message: 'Ошибка при обновлении статуса' });
     }
   };
 
