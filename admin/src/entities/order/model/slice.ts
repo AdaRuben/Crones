@@ -57,6 +57,7 @@ export const orderSlice = createSlice({
       .addCase(editOrder.rejected, (state, action) => {
         state.error = action.error.message ?? 'Странная ошибка';
       });
+    
 },
   },
   

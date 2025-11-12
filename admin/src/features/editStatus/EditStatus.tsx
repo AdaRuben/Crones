@@ -10,7 +10,7 @@ type EditOrderProps = {
   setVisibleEdit: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function EditOrder({
+export default function EditStatus({
   editing,
   setVisibleEdit,
 }: EditOrderProps): React.JSX.Element | null {

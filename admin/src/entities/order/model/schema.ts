@@ -20,3 +20,12 @@ export const ordernewSchema = orderSchema.omit({id: true});
 export const editOrderSchema = z.object({
     status: z.string(),
 })
+
+export const orderAllSchema = z.object({
+    from: z.string(),
+    to: z.string(),
+    totalCost: z.string(),
+    isPaid: z.boolean(),    
+    vehicle: z.string(),
+    adminComment: z.string().nullable(),
+});

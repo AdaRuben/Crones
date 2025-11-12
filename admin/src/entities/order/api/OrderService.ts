@@ -1,4 +1,3 @@
-import axios from "axios";
 import type { newOrder, Order } from "../model/type";
 import { orderSchema } from "../model/schema";
 import axiosInstance from "@/shared/axiosInstance";
