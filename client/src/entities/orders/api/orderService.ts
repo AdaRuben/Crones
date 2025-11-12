@@ -6,7 +6,15 @@ import { orderSchema } from '../types/schema';
 class OrderService {
   static async fetchAllOrders(): Promise<Order[]> {
     const response = await axiosInstance.get('/customer/orders');
-    return orderSchema.array().parse(response.data);
+    console.log('Raw orders data:', response.data);
+    try {
+      const parsed = orderSchema.array().parse(response.data);
+      console.log('Parsed orders:', parsed);
+      return parsed;
+    } catch (error) {
+      console.error('Zod parsing error:', error);
+      throw error;
+    }
   }
 
   static async fetchOrderById(id: number): Promise<Order> {
@@ -25,9 +33,12 @@ class OrderService {
   }
 
   static async updateCustomerComment(id: Order['id'], customerComment: string): Promise<Order> {
-    const response = await axiosInstance.patch(`/customer/orders/${id.toString()}/customerComment`, {
-      customerComment,
-    });
+    const response = await axiosInstance.patch(
+      `/customer/orders/${id.toString()}/customerComment`,
+      {
+        customerComment,
+      },
+    );
     return orderSchema.parse(response.data);
   }
 }
