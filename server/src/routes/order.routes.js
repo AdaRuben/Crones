@@ -1,10 +1,11 @@
 const express = require('express');
 const OrderController = require('../controllers/order.controller');
+const verifyAccessToken = require('../middlewares/verifyAccessToken');
 
 const orderRouter = express.Router();
 
 orderRouter.get('/', OrderController.getAllOrders);
-orderRouter.post('/', OrderController.createOrder);
+orderRouter.post('/', verifyAccessToken, OrderController.createOrder);
 orderRouter.get('/:id', OrderController.getOrderById);
 orderRouter.put('/:id', OrderController.updateOrder);
 orderRouter.delete('/:id', OrderController.deleteCancelledOrder);
