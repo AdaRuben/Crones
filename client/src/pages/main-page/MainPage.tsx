@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Form, Input, Select } from 'antd';
 import {
   clearRoute,
   hideSuggestions,
@@ -12,11 +13,16 @@ import { fetchGeocode, fetchSuggestions } from '../../entities/maps/thunks/MapTh
 import { MAP_CENTER, MOSCOW_BOUNDS, geocodeByCoords } from '../../entities/maps/api/MapApi';
 import { useAppDispatch, useAppSelector } from '../../shared/api/hooks';
 import './MainPage.css';
+import 'antd/dist/reset.css';
 
 export default function MainPage(): React.JSX.Element {
   const dispatch = useAppDispatch();
-  const { activePoint, from, to, sheetExpanded, suggestions, suggestVisible, routeInfo } =
-    useAppSelector((state) => state.map);
+  const { activePoint, from, to, suggestions, suggestVisible, routeInfo } = useAppSelector(
+    (state) => state.map,
+  );
+
+  const [vehicle, setVehicle] = useState<'Кроссовер' | 'Седан' | null>(null);
+  const [comment, setComment] = useState('');
 
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<ymaps.Map | null>(null);
@@ -151,23 +157,20 @@ export default function MainPage(): React.JSX.Element {
           )}
         </header>
 
-        <div className="form">
-          <div className="input-wrapper">
-            <label className={activePoint === 'from' ? 'active' : ''}>
-              Откуда
-              <input
-                value={from.address}
-                placeholder="Откуда забрать?"
-                onFocus={handleInputFocus('from')}
-                onChange={(event) => handleInputChange('from')(event.target.value)}
-                onBlur={(event) => handleInputBlur('from')(event.target.value)}
-                onKeyDown={(event) =>
-                  event.key === 'Enter' &&
-                  handleSelectSuggestion('from')((event.target as HTMLInputElement).value)
-                }
-              />
-            </label>
-
+        <Form className="form">
+          <div className="form-field">
+            <label>Откуда</label>
+            <Input
+              placeholder="Откуда забрать?"
+              value={from.address}
+              onChange={(e) => handleInputChange('from')(e.target.value)}
+              onFocus={handleInputFocus('from')}
+              onBlur={(e) => handleInputBlur('from')(e.target.value)}
+              onPressEnter={(e) =>
+                handleSelectSuggestion('from')((e.target as HTMLInputElement).value)
+              }
+              className={activePoint === 'from' ? 'active' : ''}
+            />
             {suggestVisible && suggestions.length > 0 && activePoint === 'from' && (
               <ul className="suggest-list">
                 {suggestions.map((item) => (
@@ -182,22 +185,19 @@ export default function MainPage(): React.JSX.Element {
             )}
           </div>
 
-          <div className="input-wrapper">
-            <label className={activePoint === 'to' ? 'active' : ''}>
-              Куда
-              <input
-                value={to.address}
-                placeholder="Куда едем?"
-                onFocus={handleInputFocus('to')}
-                onChange={(event) => handleInputChange('to')(event.target.value)}
-                onBlur={(event) => handleInputBlur('to')(event.target.value)}
-                onKeyDown={(event) =>
-                  event.key === 'Enter' &&
-                  handleSelectSuggestion('to')((event.target as HTMLInputElement).value)
-                }
-              />
-            </label>
-
+          <div className="form-field">
+            <label>Куда</label>
+            <Input
+              placeholder="Куда едем?"
+              value={to.address}
+              onChange={(e) => handleInputChange('to')(e.target.value)}
+              onFocus={handleInputFocus('to')}
+              onBlur={(e) => handleInputBlur('to')(e.target.value)}
+              onPressEnter={(e) =>
+                handleSelectSuggestion('to')((e.target as HTMLInputElement).value)
+              }
+              className={activePoint === 'to' ? 'active' : ''}
+            />
             {suggestVisible && suggestions.length > 0 && activePoint === 'to' && (
               <ul className="suggest-list">
                 {suggestions.map((item) => (
@@ -208,20 +208,48 @@ export default function MainPage(): React.JSX.Element {
               </ul>
             )}
           </div>
-        </div>
-        <label>
-          Комментарий к заказу
-          <input placeholder="Ваш комментарий" />
-        </label>
 
-        <footer>
-          <button type="button" className="secondary" onClick={() => dispatch(clearRoute())}>
-            Очистить
-          </button>
-          <button type="button" className="primary">
-            Заказать
-          </button>
-        </footer>
+          <div className="form-field">
+            <label>Тип транспорта</label>
+            <Select
+              placeholder="Выберите тип транспорта"
+              value={vehicle}
+              onChange={(value) => setVehicle(value)}
+              options={[
+                { value: 'Кроссовер', label: 'Кроссовер' },
+                { value: 'Седан', label: 'Седан' },
+              ]}
+              allowClear
+              className={vehicle ? 'active' : ''}
+            />
+          </div>
+
+          <div className="form-field">
+            <label>Комментарий к заказу</label>
+            <Input
+              placeholder="Ваш комментарий"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+          </div>
+
+          <footer>
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => {
+                dispatch(clearRoute());
+                setVehicle(null);
+                setComment('');
+              }}
+            >
+              Очистить
+            </button>
+            <button type="submit" className="primary">
+              Заказать
+            </button>
+          </footer>
+        </Form>
       </section>
     </div>
   );

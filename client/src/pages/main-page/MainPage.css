@@ -29,16 +29,19 @@ body,
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 20px;
+  bottom: 12px;
   background: #fff;
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -12px 40px rgba(15, 37, 68, 0.12);
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   transition: transform 0.3s ease;
-  transform: translateY(calc(100% - 220px));
+  transform: translateY(calc(100% - 380px));
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 header {
@@ -61,43 +64,37 @@ header {
 
 .form {
   display: flex;
-  justify-content: space-between;
-
-}
-
-.input-wrapper {
-  position: relative;
-  width: 40vw;
-}
-
-label {
-  background: #f4f6fb;
-  border-radius: 12px;
-  padding: 8px 12px;
-  display: flex;
   flex-direction: column;
+  gap: 12px;
+}
+
+.form-field {
+  position: relative;
+  width: 100%;
+}
+
+.form-field > label {
+  display: block;
   font-size: 10px;
   color: #6b7280;
-  transition: box-shadow 0.2s ease;
-}
-
-label.active,
-label:focus-within {
-  box-shadow: 0 0 0 2px #ffd700;
-}
-
-input {
-  border: none;
-  background: transparent;
-  font-size: 13px;
-  color: #111;
-  margin-top: 4px;
-  outline: none;
+  margin-bottom: 6px;
+  font-weight: 500;
 }
 
 footer {
   display: flex;
   gap: 12px;
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  padding-top: 12px;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 8px;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 10;
 }
 
 button.primary {
@@ -146,4 +143,92 @@ button.secondary {
 
 .suggest-list li:hover {
   background: #f4f6fb;
+}
+
+/* Ant Design Input customization */
+.ant-input {
+  background: #f4f6fb !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 10px 12px !important;
+  font-size: 13px !important;
+  color: #111 !important;
+  transition: box-shadow 0.2s ease !important;
+  min-height: 42px !important;
+}
+
+.ant-input:hover {
+  background: #f4f6fb !important;
+  border: none !important;
+}
+
+.ant-input:focus,
+.ant-input-focused {
+  background: #f4f6fb !important;
+  box-shadow: 0 0 0 2px #ffd700 !important;
+  border: none !important;
+}
+
+.ant-input.active {
+  box-shadow: 0 0 0 2px #ffd700 !important;
+}
+
+.ant-input::placeholder {
+  color: #9ca3af !important;
+  font-size: 13px !important;
+}
+
+/* Ant Design Select customization */
+.ant-select {
+  width: 100%;
+}
+
+.ant-select .ant-select-selector {
+  background: #f4f6fb !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 6px 12px !important;
+  font-size: 13px !important;
+  color: #111 !important;
+  transition: box-shadow 0.2s ease !important;
+  min-height: 42px !important;
+}
+
+.ant-select:hover .ant-select-selector {
+  background: #f4f6fb !important;
+  border: none !important;
+}
+
+.ant-select-focused .ant-select-selector,
+.ant-select:focus .ant-select-selector {
+  box-shadow: 0 0 0 2px #ffd700 !important;
+  background: #f4f6fb !important;
+  border: none !important;
+}
+
+.ant-select.active .ant-select-selector {
+  box-shadow: 0 0 0 2px #ffd700 !important;
+}
+
+.ant-select .ant-select-selection-placeholder {
+  color: #9ca3af !important;
+  font-size: 13px !important;
+}
+
+.ant-select-dropdown {
+  border-radius: 12px !important;
+  box-shadow: 0 12px 32px rgba(15, 37, 68, 0.16) !important;
+}
+
+.ant-select-item {
+  padding: 10px 16px !important;
+  font-size: 15px !important;
+}
+
+.ant-select-item-option-selected {
+  background: #f4f6fb !important;
+}
+
+.ant-select-item-option-active {
+  background: #f4f6fb !important;
 }
