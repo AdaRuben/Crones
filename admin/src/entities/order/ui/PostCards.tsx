@@ -32,19 +32,32 @@ export default function OrderCards({
     return new Date(date).toLocaleDateString('ru-RU', options);
   };
 
-  const handleEdit = (ord: Order): void => {
-      setEditing(ord);
+  const handleEdit = (): void => {
+      setEditing(order);
       setVisibleEdit(true);
     }
-  const handleStatusChange = async (newStatus: Order['status']) => {
+  const handleStatusChange = async (newStatus: Order['status']): Promise<void> => {
 
     dispatch(setStatus({ id: order.id, status: newStatus }));
     
     try {
+      const orderBody = {
+        customerId: order.customerId,
+        from: order.from,
+        to: order.to,
+        totalCost: order.totalCost,
+        status: newStatus,
+        isPaid: order.isPaid,
+        vehicle: order.vehicle,
+        adminComment: order.adminComment,
+        customerComment: order.customerComment,
+        finishedAt: order.finishedAt,
+        createdAt: order.createdAt,
+      };
       await dispatch(
         editOrder({
           id: order.id,
-          order: { ...order, status: newStatus },
+          order: orderBody,
         })
       ).unwrap();
     } catch (error) {
@@ -62,6 +75,12 @@ export default function OrderCards({
             title={`Заказ №${order.id.toString()}`}
             description={
               <>
+
+                <Button onClick={handleEdit}><EditOutlined /></Button>
+                {visibleEdit ? 
+                <EditOrder setVisibleEdit={setVisibleEdit} editing={editing}/>
+                :
+                <>
                 <p>Откуда: {order.from}</p>
                 <p>Куда: {order.to}</p>
                 <p>Стоимость: {order.totalCost}</p>
@@ -78,15 +97,14 @@ export default function OrderCards({
                     <Select.Option value="cancelled">Отменен</Select.Option>
                     </Select>
                     </div>
-
-                <Button onClick={handleEdit}><EditOutlined /></Button>
                 <p>Оплачено: {order.isPaid ? 'Да' : 'Нет'}</p>
                 <p>Тип кузова: {order.vehicle}</p>
                 <p>Комментарий от заказчика: {order.customerComment}</p>
                 <p>Примечание администратора: {order.adminComment}</p>
                 <p>Дата завершения: {formatDate(order.finishedAt)}</p>
                 <p>Дата создания: {formatDate(order.createdAt)}</p>
-                {visibleEdit && <EditOrder setVisibleEdit={setVisibleEdit} editing={editing}/>}
+                </>
+              }
               </>
             }
           />

@@ -82,19 +82,16 @@ export default function EditPost({
     const formFields = {
       from: getStringValue('from') || editing.from,
       to: getStringValue('to') || editing.to,
-      // Явно приводим к строке (с учётом InputNumber/формы)
       totalCost: (getStringValue('totalCost') || editing.totalCost),
       vehicle: getStringValue('vehicle') || editing.vehicle,
       adminComment: getStringValue('adminComment') || null,
     };
 
-    // Валидация только редактируемых полей
     const validFormData = orderAllSchema.parse({
       ...formFields,
       isPaid,
     });
 
-    // Полный объект обновления (со всеми обязательными полями)
     const orderData = {
       ...validFormData,
       customerId: editing.customerId,
@@ -105,12 +102,11 @@ export default function EditPost({
     };
 
     console.log('Отправляем данные:', orderData);
-
+    
     await dispatch(editOrder({ id: editing.id, order: orderData })).unwrap();
     setVisibleEdit(false);
   } catch (err) {
     console.error('Не удалось обновить заказ:', err);
-    // Форма останется открытой, чтобы пользователь увидел проблему
   }
 };
 
