@@ -3,6 +3,7 @@ require('dotenv').config();
 
 function verifyAccessToken(req, res, next) {
   try {
+    
     const accessToken = req.headers.authorization.split(' ')[1];
     if (!accessToken) {
       return res.sendStatus(401);
