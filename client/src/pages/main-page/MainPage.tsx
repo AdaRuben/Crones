@@ -6,8 +6,6 @@ import {
   setActivePoint,
   setPoint,
   setRouteInfo,
-  swapPoints,
-  toggleSheet,
 } from '../../entities/maps/slice/MapSlices';
 import { fetchGeocode, fetchSuggestions } from '../../entities/maps/thunks/MapThunks';
 import { MAP_CENTER, MOSCOW_BOUNDS, geocodeByCoords } from '../../entities/maps/api/MapApi';
@@ -54,14 +52,30 @@ export default function MainPage(): React.JSX.Element {
       ymap.options.set('maxZoom', 19);
       ymap.behaviors.enable('drag');
 
-      ymap.events.add('click', async (event) => {
-        const coords = event.get('coords') as number[];
-        const address = await geocodeByCoords(window.ymaps, coords);
-        const pointType = activePointRef.current;
+      // ymap.events.add('click', async (event) => {
+      //   const coords = event.get('coords') as number[];
+      //   const address = await geocodeByCoords(window.ymaps, coords);
+      //   const pointType = activePointRef.current;
 
-        dispatch(setPoint({ type: pointType, point: { address, coords } }));
-        dispatch(setActivePoint(pointType === 'from' ? 'to' : 'from'));
-        dispatch(hideSuggestions());
+      //   dispatch(setPoint({ type: pointType, point: { address, coords } }));
+      //   dispatch(setActivePoint(pointType === 'from' ? 'to' : 'from'));
+      //   dispatch(hideSuggestions());
+      // });
+
+      type eventType = HTMLButtonElement & { get: (key: string) => unknown };
+
+      ymap.events.add('click', (event: eventType) => {
+        void (async () => {
+          console.log(event);
+
+          const coords = event.get('coords') as [number, number];
+          const address = await geocodeByCoords(window.ymaps, coords);
+          const pointType = activePointRef.current;
+
+          dispatch(setPoint({ type: pointType, point: { address, coords } }));
+          dispatch(setActivePoint(pointType === 'from' ? 'to' : 'from'));
+          dispatch(hideSuggestions());
+        })();
       });
 
       mapInstance.current = ymap;
