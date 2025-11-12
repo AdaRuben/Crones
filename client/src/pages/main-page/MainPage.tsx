@@ -15,6 +15,7 @@ import './MainPage.css';
 import 'antd/dist/reset.css';
 import { newOrderSchema } from '@/entities/orders/types/schema';
 import { createOrder } from '@/entities/orders/model/thunks';
+import { message } from 'antd';
 
 export default function MainPage(): React.JSX.Element {
   const auth = useAppSelector((state) => state.auth);
@@ -102,9 +103,10 @@ export default function MainPage(): React.JSX.Element {
 
         dispatch(
           setRouteInfo({
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+   
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             distance: activeRoute.properties.get('distance').text,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             time: activeRoute.properties.get('duration').text,
           }),
         );
@@ -150,7 +152,7 @@ export default function MainPage(): React.JSX.Element {
 
   const handleOrderSubmit = async (values: OrderFormValues): Promise<void> => {
     if (!auth.user) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
       message.error('Авторизуйтесь, чтобы оформить заказ');
       return;
     }
