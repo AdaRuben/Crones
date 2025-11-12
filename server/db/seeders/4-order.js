@@ -2,7 +2,7 @@
 
 /** @type {import('sequelize-cli').Seed} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     await queryInterface.bulkInsert(
       'Orders',
       [
@@ -14,7 +14,7 @@ module.exports = {
           totalCost: 1500.75,
           status: 'new',
           isPaid: false,
-          vehicle: 'Sedan',
+          vehicle: 'Седан',
           customerComment: 'Пожалуйста, без опозданий',
           adminComment: null,
           finishedAt: null,
@@ -29,7 +29,7 @@ module.exports = {
           totalCost: 700.0,
           status: 'in process',
           isPaid: true,
-          vehicle: 'SUV',
+          vehicle: 'Кроссовер',
           customerComment: null,
           adminComment: 'Водитель назначен',
           finishedAt: null,
@@ -44,7 +44,7 @@ module.exports = {
           totalCost: 900,
           status: 'finished',
           isPaid: true,
-          vehicle: 'Minivan',
+          vehicle: 'Кроссовер',
           customerComment: 'Позвоните по приезду',
           adminComment: 'Завершено успешно',
           finishedAt: new Date(),
@@ -56,7 +56,7 @@ module.exports = {
     );
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.bulkDelete('Orders', null, {});
   },
 };

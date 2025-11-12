@@ -19,8 +19,16 @@ class AuthController {
     } catch (error) {
       console.log(error);
 
+      // Проверка на дублирование phoneNumber (Sequelize UniqueConstraintError)
+      if (error.name === 'SequelizeUniqueConstraintError') {
+        return res
+          .status(400)
+          .json({ message: 'Пользователь с таким номером телефона уже существует' });
+      }
       if (error.message === 'Duplicate entry') {
-        return res.status(400).json({ message: error.message });
+        return res
+          .status(400)
+          .json({ message: 'Пользователь с таким номером телефона уже существует' });
       }
       return res.status(500).json({ message: error.message });
     }

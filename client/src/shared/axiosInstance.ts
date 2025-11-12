@@ -23,8 +23,8 @@ axiosInstance.interceptors.response.use(
 
     if (!prev) return Promise.reject(err);
 
-    if (err.status === 403 && !prev.sent) {
-      prev.sent = true
+    if (err.response?.status === 403 && !prev.sent) {
+      prev.sent = true;
       const response = await axios.get<{ accessToken: string }>('/api/auth/refresh');
       setAccessToken(response.data.accessToken);
       prev.headers.Authorization = `Bearer ${accessToken}`;

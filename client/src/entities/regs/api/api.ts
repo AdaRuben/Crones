@@ -1,4 +1,4 @@
-import axiosInstance from '../../../shared/axiosInstance';
+import axiosInstance, { setAccessToken } from '../../../shared/axiosInstance';
 import type { UserLogin, UserResponse } from '../types/types';
 import { UserResponseSchema, type UserRegister } from '../types/types';
 
@@ -7,6 +7,7 @@ export const userService = {
     try {
       const response = await axiosInstance.post('/auth/signup', formData);
       const validateData = UserResponseSchema.parse(response.data);
+      setAccessToken(validateData.accessToken);
       return validateData;
     } catch (error) {
       if (error instanceof Error) {
@@ -20,6 +21,7 @@ export const userService = {
     try {
       const response = await axiosInstance.post('/auth/signin', formData);
       const validateData = UserResponseSchema.parse(response.data);
+      setAccessToken(validateData.accessToken);
       return validateData;
     } catch (error) {
       if (error instanceof Error) {
@@ -44,6 +46,7 @@ export const userService = {
     try {
       const response = await axiosInstance.get('/auth/refresh');
       const validateData = UserResponseSchema.parse(response.data);
+      setAccessToken(validateData.accessToken);
       return validateData;
     } catch (error) {
       if (error instanceof Error) {
