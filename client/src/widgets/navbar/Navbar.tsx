@@ -9,7 +9,6 @@ import LogoutButton from '@/features/logout-button/LogoutButton';
 export default function Navbar(): React.JSX.Element {
   const userStatus = useAppSelector((store) => store.auth.status);
 
-export default function Navbar(): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
