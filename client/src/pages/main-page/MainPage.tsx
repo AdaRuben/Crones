@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
-import { Form, Input, Select } from 'antd';
+import { useEffect, useRef } from 'react';
 import {
   clearRoute,
   hideSuggestions,
@@ -10,6 +9,9 @@ import {
 import { fetchGeocode, fetchSuggestions } from '../../entities/maps/thunks/MapThunks';
 import { MAP_CENTER, MOSCOW_BOUNDS, geocodeByCoords } from '../../entities/maps/api/MapApi';
 import { useAppDispatch, useAppSelector } from '../../shared/api/hooks';
+import OrderForm, {
+  type OrderFormSubmitPayload,
+} from '../../widgets/new-order-field/NewOrderField';
 import './MainPage.css';
 import 'antd/dist/reset.css';
 
@@ -19,13 +21,10 @@ export default function MainPage(): React.JSX.Element {
     (state) => state.map,
   );
 
-  const [vehicle, setVehicle] = useState<'Кроссовер' | 'Седан' | null>(null);
-  const [comment, setComment] = useState('');
-
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<ymaps.Map | null>(null);
   const routeRef = useRef<ymaps.multiRouter.MultiRoute | null>(null);
-  const ymapsRef = useRef<typeof ymaps>();
+  const ymapsRef = useRef<typeof ymaps | null>(null);
   const activePointRef = useRef(activePoint);
 
   useEffect(() => {
@@ -52,22 +51,10 @@ export default function MainPage(): React.JSX.Element {
       ymap.options.set('maxZoom', 19);
       ymap.behaviors.enable('drag');
 
-      // ymap.events.add('click', async (event) => {
-      //   const coords = event.get('coords') as number[];
-      //   const address = await geocodeByCoords(window.ymaps, coords);
-      //   const pointType = activePointRef.current;
+      type YMapClickEvent = HTMLButtonElement & { get: (key: string) => unknown };
 
-      //   dispatch(setPoint({ type: pointType, point: { address, coords } }));
-      //   dispatch(setActivePoint(pointType === 'from' ? 'to' : 'from'));
-      //   dispatch(hideSuggestions());
-      // });
-
-      type eventType = HTMLButtonElement & { get: (key: string) => unknown };
-
-      ymap.events.add('click', (event: eventType) => {
+      ymap.events.add('click', (event: YMapClickEvent) => {
         void (async () => {
-          console.log(event);
-
           const coords = event.get('coords') as [number, number];
           const address = await geocodeByCoords(window.ymaps, coords);
           const pointType = activePointRef.current;
@@ -131,7 +118,7 @@ export default function MainPage(): React.JSX.Element {
     dispatch(setPoint({ type, point: { address: value, coords: null } }));
 
     if (ymapsRef.current && value.trim()) {
-      dispatch(fetchSuggestions({ query: value, ymaps: ymapsRef.current }));
+     void dispatch(fetchSuggestions({ query: value, ymaps: ymapsRef.current }));
     }
   };
 
@@ -140,131 +127,51 @@ export default function MainPage(): React.JSX.Element {
 
     const value = type === 'from' ? from.address : to.address;
     if (ymapsRef.current && value.trim()) {
-      dispatch(fetchSuggestions({ query: value, ymaps: ymapsRef.current }));
+      void dispatch(fetchSuggestions({ query: value, ymaps: ymapsRef.current }));
     }
   };
 
   const handleInputBlur = (type: 'from' | 'to') => (value: string) => {
     if (!ymapsRef.current) return;
-    dispatch(fetchGeocode({ type, query: value, ymaps: ymapsRef.current }));
+    void dispatch(fetchGeocode({ type, query: value, ymaps: ymapsRef.current }));
   };
 
   const handleSelectSuggestion = (type: 'from' | 'to') => (value: string) => {
     if (!ymapsRef.current) return;
-    dispatch(fetchGeocode({ type, query: value, ymaps: ymapsRef.current }));
+    void dispatch(fetchGeocode({ type, query: value, ymaps: ymapsRef.current }));
     dispatch(hideSuggestions());
+  };
+
+  const handleOrderSubmit = (payload: OrderFormSubmitPayload): void => {
+    // TODO: интеграция с API создания заказа.
+    console.log('Submitting order', payload);
+  };
+
+  const handleClearRoute = (): void => {
+    dispatch(clearRoute());
   };
 
   return (
     <div className="app">
       <div ref={mapRef} className="map" />
-
-      <section className={'bottom-sheet'}>
-        <header>
-          <div className="title">Вызов эвакуатора</div>
-          {routeInfo && (
-            <div className="route-info">
-              <span>{routeInfo.distance}</span>
-              <span>•</span>
-              <span>{routeInfo.time}</span>
-            </div>
-          )}
-        </header>
-
-        <Form className="form">
-          <div className="form-field">
-            <label>Откуда</label>
-            <Input
-              placeholder="Откуда забрать?"
-              value={from.address}
-              onChange={(e) => handleInputChange('from')(e.target.value)}
-              onFocus={handleInputFocus('from')}
-              onBlur={(e) => handleInputBlur('from')(e.target.value)}
-              onPressEnter={(e) =>
-                handleSelectSuggestion('from')((e.target as HTMLInputElement).value)
-              }
-              className={activePoint === 'from' ? 'active' : ''}
-            />
-            {suggestVisible && suggestions.length > 0 && activePoint === 'from' && (
-              <ul className="suggest-list">
-                {suggestions.map((item) => (
-                  <li
-                    key={item.value}
-                    onMouseDown={() => handleSelectSuggestion('from')(item.value)}
-                  >
-                    {item.displayName}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div className="form-field">
-            <label>Куда</label>
-            <Input
-              placeholder="Куда едем?"
-              value={to.address}
-              onChange={(e) => handleInputChange('to')(e.target.value)}
-              onFocus={handleInputFocus('to')}
-              onBlur={(e) => handleInputBlur('to')(e.target.value)}
-              onPressEnter={(e) =>
-                handleSelectSuggestion('to')((e.target as HTMLInputElement).value)
-              }
-              className={activePoint === 'to' ? 'active' : ''}
-            />
-            {suggestVisible && suggestions.length > 0 && activePoint === 'to' && (
-              <ul className="suggest-list">
-                {suggestions.map((item) => (
-                  <li key={item.value} onMouseDown={() => handleSelectSuggestion('to')(item.value)}>
-                    {item.displayName}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div className="form-field">
-            <label>Тип транспорта</label>
-            <Select
-              placeholder="Выберите тип транспорта"
-              value={vehicle}
-              onChange={(value) => setVehicle(value)}
-              options={[
-                { value: 'Кроссовер', label: 'Кроссовер' },
-                { value: 'Седан', label: 'Седан' },
-              ]}
-              allowClear
-              className={vehicle ? 'active' : ''}
-            />
-          </div>
-
-          <div className="form-field">
-            <label>Комментарий к заказу</label>
-            <Input
-              placeholder="Ваш комментарий"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-          </div>
-
-          <footer>
-            <button
-              type="button"
-              className="secondary"
-              onClick={() => {
-                dispatch(clearRoute());
-                setVehicle(null);
-                setComment('');
-              }}
-            >
-              Очистить
-            </button>
-            <button type="submit" className="primary">
-              Заказать
-            </button>
-          </footer>
-        </Form>
-      </section>
+      <OrderForm
+        routeInfo={routeInfo}
+        fromAddress={from.address}
+        toAddress={to.address}
+        activePoint={activePoint}
+        suggestions={suggestions}
+        suggestVisible={suggestVisible}
+        onFromChange={handleInputChange('from')}
+        onToChange={handleInputChange('to')}
+        onFromFocus={handleInputFocus('from')}
+        onToFocus={handleInputFocus('to')}
+        onFromBlur={handleInputBlur('from')}
+        onToBlur={handleInputBlur('to')}
+        onFromSelect={handleSelectSuggestion('from')}
+        onToSelect={handleSelectSuggestion('to')}
+        onClear={handleClearRoute}
+        onSubmit={handleOrderSubmit}
+      />
     </div>
   );
 }

@@ -5,26 +5,27 @@ export const MOSCOW_BOUNDS: [number, number][] = [
 
 export const MAP_CENTER: [number, number] = [55.751244, 37.618423];
 
-export async function geocode(
-  ymaps: typeof window.ymaps,
-  query: string,
-): Promise<{ address: string; coords: number[] } | null> {
+export async function geocode(ymaps: typeof window.ymaps, query: string) {
   const trimmed = query.trim();
   if (!trimmed) return null;
 
-  const res = await ymaps.geocode(trimmed, {
-    results: 1,
-    boundedBy: MOSCOW_BOUNDS,
-    strictBounds: true,
-  });
+  try {
+    const res = await ymaps.geocode(trimmed, {
+      results: 1,
+      boundedBy: MOSCOW_BOUNDS,
+      strictBounds: true,
+    });
+    const obj = res.geoObjects.get(0);
+    if (!obj) return null;
 
-  const obj = res.geoObjects.get(0);
-  if (!obj) return null;
-
-  return {
-    address: obj.getAddressLine(),
-    coords: obj.geometry!.getCoordinates() as number[],
-  };
+    return {
+      address: obj.getAddressLine(),
+      coords: obj.geometry!.getCoordinates() as number[],
+    };
+  } catch (err: any) {
+    if (err?.message === 'scriptError') return null; // “не нашли, но без крэша”
+    throw err;
+  }
 }
 
 export async function geocodeByCoords(
@@ -44,7 +45,7 @@ export async function geocodeByCoords(
 export async function suggest(
   ymaps: typeof window.ymaps,
   query: string,
-): Promise<Array<{ value: string; displayName: string }>> {
+): Promise<{ value: string; displayName: string }[]> {
   const trimmed = query.trim();
   if (!trimmed) return [];
 
