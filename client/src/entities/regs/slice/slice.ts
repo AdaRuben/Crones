@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { User } from '../types/types';
 import { refresh, signIn, signOut, signUp } from '../thunks/thunks';
+import { setAccessToken } from '@/shared/axiosInstance';
 
 type UserState = {
   user: User | null;
@@ -28,6 +29,7 @@ const userSlice = createSlice({
         state.user = payload.user;
         state.status = 'logged';
         state.error = null;
+        setAccessToken(payload.accessToken);
       })
       .addCase(signIn.rejected, (state, action) => {
         state.status = 'guest';
@@ -44,6 +46,7 @@ const userSlice = createSlice({
         state.user = payload.user;
         state.status = 'logged';
         state.error = null;
+        setAccessToken(payload.accessToken);
       })
       .addCase(signUp.rejected, (state, action) => {
         state.status = 'guest';
@@ -60,6 +63,7 @@ const userSlice = createSlice({
         state.user = null;
         state.status = 'guest';
         state.error = null;
+        setAccessToken('');
       })
       .addCase(signOut.rejected, (state, action) => {
         state.status = 'logged';
@@ -76,11 +80,13 @@ const userSlice = createSlice({
         state.user = payload.user;
         state.status = 'logged';
         state.error = null;
+        setAccessToken(payload.accessToken);
       })
       .addCase(refresh.rejected, (state, action) => {
         state.status = 'guest';
         state.user = null;
         state.error = action.error.message ?? 'Ошибка при обновлении';
+        setAccessToken('');
       });
   },
 });

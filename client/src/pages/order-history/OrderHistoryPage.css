@@ -1,0 +1,127 @@
+/* OrderHistoryPage.css */
+
+.order-history-page {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.order-history-title {
+  margin-bottom: 24px !important;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+/* Состояния загрузки и ошибок */
+.order-history-loading,
+.order-history-error,
+.order-history-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 24px;
+}
+
+.order-history-error {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Карточка заказа */
+.order-card {
+  height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.order-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.order-card .ant-card-head {
+  background-color: #fafafa;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.order-card .ant-card-body {
+  padding: 20px;
+}
+
+/* Маршрут */
+.route-text {
+  margin: 8px 0 0 0 !important;
+  padding-left: 24px;
+  font-size: 15px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .order-history-page {
+    padding: 16px;
+  }
+
+  .order-history-title {
+    font-size: 24px !important;
+  }
+
+  .order-card .ant-card-head-title {
+    font-size: 14px;
+  }
+
+  .order-card .ant-card-extra {
+    margin-top: 8px;
+  }
+
+  .route-text {
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .order-history-page {
+    padding: 12px;
+  }
+
+  .order-history-title {
+    font-size: 20px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .order-card {
+    margin-bottom: 16px;
+  }
+
+  .order-card .ant-card-body {
+    padding: 16px;
+  }
+}
+
+/* Темная тема (опционально) */
+@media (prefers-color-scheme: dark) {
+  .order-history-page {
+    background-color: #141414;
+  }
+
+  .order-history-title {
+    color: #ffffff;
+  }
+
+  .order-card {
+    background-color: #1f1f1f;
+    border-color: #303030;
+  }
+
+  .order-card .ant-card-head {
+    background-color: #262626;
+    border-bottom-color: #303030;
+  }
+
+  .order-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+}
