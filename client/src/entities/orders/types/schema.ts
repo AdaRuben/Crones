@@ -1,9 +1,15 @@
 import z from 'zod';
 
+export const driverSchema = z.object({
+  name: z.string(),
+  phoneNumber: z.string(),
+});
+
 export const orderSchema = z.object({
   id: z.number(),
   customerId: z.number(),
   driverId: z.number().nullable(),
+  Driver: driverSchema.nullable().optional(),
   from: z.string(),
   to: z.string(),
   totalCost: z.coerce.number().nullable(),
@@ -15,4 +21,4 @@ export const orderSchema = z.object({
   finishedAt: z.coerce.date().nullable().optional(),
 });
 
-export const newOrderSchema = orderSchema.omit({ id: true, customerId: true });
+export const newOrderSchema = orderSchema.omit({ id: true, customerId: true, Driver: true });

@@ -15,7 +15,8 @@ import './MainPage.css';
 import 'antd/dist/reset.css';
 import { newOrderSchema } from '@/entities/orders/types/schema';
 import { createOrder } from '@/entities/orders/model/thunks';
-import { message } from 'antd';
+import { notification } from 'antd';
+import { useNavigate } from 'react-router';
 
 export default function MainPage(): React.JSX.Element {
   const auth = useAppSelector((state) => state.auth);
@@ -23,6 +24,8 @@ export default function MainPage(): React.JSX.Element {
   const { activePoint, from, to, suggestions, suggestVisible, routeInfo } = useAppSelector(
     (state) => state.map,
   );
+  const navigate = useNavigate();
+  const [api, contextHolder] = notification.useNotification();
 
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<ymaps.Map | null>(null);
@@ -103,7 +106,6 @@ export default function MainPage(): React.JSX.Element {
 
         dispatch(
           setRouteInfo({
-   
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             distance: activeRoute.properties.get('distance').text,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
@@ -152,8 +154,7 @@ export default function MainPage(): React.JSX.Element {
 
   const handleOrderSubmit = async (values: OrderFormValues): Promise<void> => {
     if (!auth.user) {
-
-      message.error('Авторизуйтесь, чтобы оформить заказ');
+      void navigate('/auth');
       return;
     }
     try {
@@ -170,11 +171,22 @@ export default function MainPage(): React.JSX.Element {
         finishedAt: undefined,
       });
       await dispatch(createOrder(orderPayload)).unwrap();
-      message.success('Заказ отправлен');
+      api.success({
+        message: 'Заказ успешно оформлен!',
+        description:
+          'Ваш заказ отправлен и скоро будет обработан. Отслеживайте статус в разделе "Мои заказы".',
+        placement: 'topRight',
+        duration: 5,
+      });
       dispatch(clearRoute());
     } catch (error) {
       const text = error instanceof Error ? error.message : 'Не удалось создать заказ';
-      message.error(text);
+      api.error({
+        message: 'Ошибка при создании заказа',
+        description: text,
+        placement: 'topRight',
+        duration: 5,
+      });
     }
   };
   const handleClearRoute = (): void => {
@@ -183,6 +195,7 @@ export default function MainPage(): React.JSX.Element {
 
   return (
     <div className="app">
+      {contextHolder}
       <div ref={mapRef} className="map" />
       <OrderForm
         routeInfo={routeInfo}
