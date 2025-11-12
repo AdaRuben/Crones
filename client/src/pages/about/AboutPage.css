@@ -1,0 +1,221 @@
+/* AboutPage.css */
+
+.about-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+}
+
+.about-hero {
+  padding: 80px 24px 60px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  text-align: center;
+}
+
+.about-title {
+  color: #ffd700 !important;
+  font-size: 48px !important;
+  font-weight: bold !important;
+  margin-bottom: 16px !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.about-subtitle {
+  color: #ffffff !important;
+  font-weight: 300 !important;
+  margin-top: 0 !important;
+}
+
+.about-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.about-intro-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+  border: none;
+}
+
+.about-intro-text {
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.feature-card {
+  height: 100%;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  background: #ffffff;
+  border: none;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.2);
+}
+
+.feature-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border-radius: 50%;
+  margin-bottom: 16px;
+}
+
+.feature-title {
+  color: #1a1a1a !important;
+  font-size: 20px !important;
+  margin-bottom: 12px !important;
+  font-weight: 600 !important;
+}
+
+.feature-description {
+  color: #666 !important;
+  font-size: 14px;
+  margin-bottom: 0 !important;
+  line-height: 1.6;
+}
+
+.about-cta-card {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  margin-top: 40px;
+  border: none;
+}
+
+.about-cta-card .ant-card-body {
+  padding: 48px 24px;
+}
+
+.about-cta-card h3 {
+  color: #1a1a1a !important;
+  margin-bottom: 16px !important;
+}
+
+.about-cta-card p {
+  color: #333 !important;
+}
+
+/* Ant Design Divider */
+.about-content .ant-divider {
+  border-color: rgba(255, 255, 255, 0.2);
+  margin: 48px 0;
+}
+
+.about-content .ant-divider-inner-text {
+  background: #1a1a1a;
+  padding: 0 24px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .about-hero {
+    padding: 60px 16px 40px;
+  }
+
+  .about-title {
+    font-size: 36px !important;
+  }
+
+  .about-subtitle {
+    font-size: 20px !important;
+  }
+
+  .about-content {
+    padding: 24px 16px;
+  }
+
+  .about-intro-card .ant-card-body {
+    padding: 20px;
+  }
+
+  .about-intro-text {
+    font-size: 14px;
+  }
+
+  .feature-card .ant-card-body {
+    padding: 20px;
+  }
+
+  .feature-title {
+    font-size: 18px !important;
+  }
+
+  .feature-description {
+    font-size: 13px;
+  }
+
+  .about-cta-card .ant-card-body {
+    padding: 32px 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .about-hero {
+    padding: 40px 12px 30px;
+  }
+
+  .about-title {
+    font-size: 28px !important;
+  }
+
+  .about-subtitle {
+    font-size: 18px !important;
+  }
+
+  .about-content {
+    padding: 20px 12px;
+  }
+
+  .about-intro-card .ant-card-body {
+    padding: 16px;
+  }
+
+  .feature-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .feature-icon svg {
+    font-size: 20px !important;
+  }
+
+  .about-cta-card .ant-card-body {
+    padding: 24px 16px;
+  }
+}
+
+/* Темная тема */
+@media (prefers-color-scheme: dark) {
+  .about-intro-card,
+  .feature-card {
+    background: #1f1f1f;
+    border-color: #303030;
+  }
+
+  .about-intro-text {
+    color: #e0e0e0;
+  }
+
+  .feature-title {
+    color: #ffffff !important;
+  }
+
+  .feature-description {
+    color: #b0b0b0 !important;
+  }
+
+  .feature-card:hover {
+    box-shadow: 0 8px 24px rgba(255, 215, 0, 0.3);
+  }
+}
