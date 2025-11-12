@@ -60,24 +60,6 @@ export default function OrderHistoryPage(): React.JSX.Element {
     );
   };
 
-  const handleCancelOrder = (orderId: number): void => {
-    Modal.confirm({
-      title: 'Отменить заказ?',
-      content: 'Вы уверены, что хотите отменить этот заказ?',
-      okText: 'Да, отменить',
-      cancelText: 'Нет',
-      okType: 'danger',
-      onOk: async () => {
-        try {
-          await dispatch(cancelOrder(orderId)).unwrap();
-          message.success('Заказ успешно отменен');
-        } catch {
-          message.error('Не удалось отменить заказ');
-        }
-      },
-    });
-  };
-
   const handleEditComment = (orderId: number, currentComment?: string): void => {
     setEditingCommentId(orderId);
     setCommentValue(currentComment ?? '');
@@ -149,21 +131,9 @@ export default function OrderHistoryPage(): React.JSX.Element {
               className="order-card"
               title={
                 <Space>
-                  <Text strong>Заказ #{order.id}</Text>
+                  <Text strong>Заказ № {order.id}</Text>
                   {getStatusTag(order.status)}
                 </Space>
-              }
-              extra={
-                (order.status === 'new' || order.status === 'in process') && (
-                  <Button
-                    type="text"
-                    danger
-                    icon={<StopOutlined />}
-                    onClick={() => handleCancelOrder(order.id)}
-                  >
-                    Отменить
-                  </Button>
-                )
               }
             >
               <Space direction="vertical" size="middle" style={{ width: '100%' }}>
@@ -255,16 +225,6 @@ export default function OrderHistoryPage(): React.JSX.Element {
                     </div>
                   )}
                 </div>
-
-                {/* Комментарий администратора
-                {order.adminComment && (
-                  <Alert
-                    message="Комментарий администратора"
-                    description={order.adminComment}
-                    type="info"
-                    showIcon
-                  />
-                )} */}
 
                 {/* Дата завершения */}
                 {order.finishedAt && (
