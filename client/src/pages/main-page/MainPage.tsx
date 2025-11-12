@@ -198,24 +198,21 @@ export default function MainPage(): React.JSX.Element {
               />
             </label>
 
+            {suggestVisible && suggestions.length > 0 && activePoint === 'to' && (
+              <ul className="suggest-list">
+                {suggestions.map((item) => (
+                  <li key={item.value} onMouseDown={() => handleSelectSuggestion('to')(item.value)}>
+                    {item.displayName}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
-            <label 
-            className={activePoint === 'from' ? 'active' : ''}
-            >
-              Комментарий к заказу
-              <input
-                value={from.address}
-                // placeholder="Откуда забрать?"
-                onFocus={handleInputFocus('from')}
-                onChange={(event) => handleInputChange('from')(event.target.value)}
-                onBlur={(event) => handleInputBlur('from')(event.target.value)}
-                onKeyDown={(event) =>
-                  event.key === 'Enter' &&
-                  handleSelectSuggestion('from')((event.target as HTMLInputElement).value)
-                }
-              />
-            </label>
+        <label>
+          Комментарий к заказу
+          <input placeholder="Ваш комментарий" />
+        </label>
 
         <footer>
           <button type="button" className="secondary" onClick={() => dispatch(clearRoute())}>
