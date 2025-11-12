@@ -96,6 +96,7 @@ export default function OrderForm({
           () => ({ vehicle: null, comment: '', fromAddress, toAddress }),
           [fromAddress, toAddress],
         )}
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         onValuesChange={(changedValues) => handleValuesChange(changedValues)}
         onFinish={handleFinish}
       >

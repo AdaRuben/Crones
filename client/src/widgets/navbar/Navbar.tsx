@@ -4,11 +4,11 @@ import React, { useState } from 'react';
 import './styles.css';
 import { useNavigate } from 'react-router';
 
-export default function Navbar() {
+export default function Navbar(): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const toggleMenu = (): void => setIsOpen(!isOpen);
 
   return (
     <nav className="navbar">

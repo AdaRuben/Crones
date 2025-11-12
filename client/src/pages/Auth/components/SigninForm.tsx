@@ -31,11 +31,14 @@ export default function SigninForm({ onSubmit }: SigninFormProps): React.JSX.Ele
         rules={[
           { required: true, message: 'Введите телефон' },
           {
-            validator: (_, value) => {
-              const clean = `+7${(value || '').replace(/\D/g, '').slice(1)}`;
+            validator: (_rule, rawValue) => {
+              const value = typeof rawValue === 'string' ? rawValue : '';
+              const clean = `+7${value.replace(/\D/g, '').slice(1)}`;
+
               if (clean.length !== 12) {
-                return Promise.reject('Номер должен содержать 11 цифр');
+                return Promise.reject(new Error('Номер должен содержать 11 цифр'));
               }
+
               return Promise.resolve();
             },
           },
