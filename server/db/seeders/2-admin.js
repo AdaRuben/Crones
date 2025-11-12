@@ -2,7 +2,8 @@
 
 const bcrypt = require('bcrypt');
 
-/** @type {import('sequelize-cli').Seed} */
+
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert(
