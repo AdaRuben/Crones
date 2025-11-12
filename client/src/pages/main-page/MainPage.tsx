@@ -9,13 +9,15 @@ import {
 import { fetchGeocode, fetchSuggestions } from '../../entities/maps/thunks/MapThunks';
 import { MAP_CENTER, MOSCOW_BOUNDS, geocodeByCoords } from '../../entities/maps/api/MapApi';
 import { useAppDispatch, useAppSelector } from '../../shared/api/hooks';
-import OrderForm, {
-  type OrderFormSubmitPayload,
-} from '../../widgets/new-order-field/NewOrderField';
+import type { OrderFormValues } from '../../widgets/new-order-field/NewOrderField';
+import OrderForm from '../../widgets/new-order-field/NewOrderField';
 import './MainPage.css';
 import 'antd/dist/reset.css';
+import { newOrderSchema } from '@/entities/orders/types/schema';
+import { createOrder } from '@/entities/orders/model/thunks';
 
 export default function MainPage(): React.JSX.Element {
+  const auth = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const { activePoint, from, to, suggestions, suggestVisible, routeInfo } = useAppSelector(
     (state) => state.map,
@@ -92,6 +94,7 @@ export default function MainPage(): React.JSX.Element {
       { boundsAutoApply: true },
     );
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     route.model.events
       .add('requestsuccess', () => {
         const activeRoute = route.getActiveRoute();
@@ -99,11 +102,14 @@ export default function MainPage(): React.JSX.Element {
 
         dispatch(
           setRouteInfo({
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             distance: activeRoute.properties.get('distance').text,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             time: activeRoute.properties.get('duration').text,
           }),
         );
       })
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       .add('requestfail', () => dispatch(setRouteInfo(null)));
 
     if (routeRef.current) {
@@ -118,7 +124,7 @@ export default function MainPage(): React.JSX.Element {
     dispatch(setPoint({ type, point: { address: value, coords: null } }));
 
     if (ymapsRef.current && value.trim()) {
-     void dispatch(fetchSuggestions({ query: value, ymaps: ymapsRef.current }));
+      void dispatch(fetchSuggestions({ query: value, ymaps: ymapsRef.current }));
     }
   };
 
@@ -142,11 +148,33 @@ export default function MainPage(): React.JSX.Element {
     dispatch(hideSuggestions());
   };
 
-  const handleOrderSubmit = (payload: OrderFormSubmitPayload): void => {
-    // TODO: интеграция с API создания заказа.
-    console.log('Submitting order', payload);
+  const handleOrderSubmit = async (values: OrderFormValues): Promise<void> => {
+    if (!auth.user) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      message.error('Авторизуйтесь, чтобы оформить заказ');
+      return;
+    }
+    try {
+      const orderPayload = newOrderSchema.parse({
+        driverId: null,
+        from: values.fromAddress.trim(),
+        to: values.toAddress.trim(),
+        vehicle: values.vehicle,
+        status: 'new',
+        isPaid: false,
+        totalCost: null,
+        customerComment: values.comment || undefined,
+        adminComment: undefined,
+        finishedAt: undefined,
+      });
+      await dispatch(createOrder(orderPayload)).unwrap();
+      message.success('Заказ отправлен');
+      dispatch(clearRoute());
+    } catch (error) {
+      const text = error instanceof Error ? error.message : 'Не удалось создать заказ';
+      message.error(text);
+    }
   };
-
   const handleClearRoute = (): void => {
     dispatch(clearRoute());
   };

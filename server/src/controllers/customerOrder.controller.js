@@ -1,4 +1,5 @@
 const CustomerOrderService = require('../services/customerOrder.service');
+const MailService = require('../services/mail.service');
 
 class CustomerOrderController {
   static async getAllOrders(req, res) {
@@ -31,6 +32,10 @@ class CustomerOrderController {
     try {
       const customerId = res.locals.customer.id;
       const order = await CustomerOrderService.createOrder({ ...req.body, customerId });
+      MailService.sendNewOrderEmail(order).catch((err) =>
+        console.error('Mail error:', err),
+      );
+      // res.status(201).json(order);
       res.status(201).json(order);
     } catch (error) {
       console.log(error);

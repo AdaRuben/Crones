@@ -145,7 +145,7 @@ export default function OrderForm({
           </ul>
         )}
 
-        <Form.Item<OrderFormValues['vehicle']> name="vehicle">
+        <Form.Item<OrderFormValues['vehicle']> name="vehicle" rules={[{ required: true, message: 'Выберите тип транспорта' }]}>
           <Select
             placeholder="Выберите тип транспорта"
             allowClear
