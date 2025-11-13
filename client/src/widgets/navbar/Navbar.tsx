@@ -12,33 +12,41 @@ export default function Navbar(): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const toggleMenu = (): void => setIsOpen(!isOpen);
+  const toggleMenu = (): void => setIsOpen((prev) => !prev);
+
+  const handleNavigate = (path: string): void => {
+    navigate(path);
+    setIsOpen(false);
+  };
 
   return (
     <nav className="navbar">
       {/* Логотип */}
-      <div className="logo" onClick={() => navigate('/')}>
+      <button type="button" className="logo" onClick={() => handleNavigate('/')}>
         КРОКОВОЗ
-      </div>
+      </button>
 
       {/* Десктопные ссылки */}
       <div className="nav-links">
         {userStatus === 'guest' ? (
-          <a href="/auth" onClick={toggleMenu}>
+          <button type="button" onClick={() => handleNavigate('/auth')}>
             Войти
-          </a>
+          </button>
         ) : (
-          <a href="/history" onClick={toggleMenu}>
+          <button type="button" onClick={() => handleNavigate('/history')}>
             Мои заказы
-          </a>
+          </button>
         )}
-        <a href="/about" onClick={toggleMenu}>
+        <button type="button" onClick={() => handleNavigate('/support')} disabled={userStatus !== 'logged'}>
+          Чат с поддержкой
+        </button>
+        <button type="button" onClick={() => handleNavigate('/about')}>
           О нас
-        </a>
-        <a href="/contacts" onClick={toggleMenu}>
+        </button>
+        <button type="button" onClick={() => handleNavigate('/contacts')}>
           Контакты
-        </a>
-        {userStatus === 'logged' && <LogoutButton onClick={toggleMenu} />}
+        </button>
+        {userStatus === 'logged' && <LogoutButton onClick={() => setIsOpen(false)} />}
       </div>
 
       {/* Бургер-меню */}
@@ -56,21 +64,26 @@ export default function Navbar(): React.JSX.Element {
       {isOpen && (
         <div className="mobile-menu">
           {userStatus === 'guest' ? (
-            <a href="/auth" onClick={toggleMenu}>
+            <button type="button" onClick={() => handleNavigate('/auth')}>
               Войти
-            </a>
+            </button>
           ) : (
-            <a href="/history" onClick={toggleMenu}>
+            <button type="button" onClick={() => handleNavigate('/history')}>
               Мои заказы
-            </a>
+            </button>
           )}
-          <a href="/about" onClick={toggleMenu}>
+          {userStatus === 'logged' && (
+            <button type="button" onClick={() => handleNavigate('/support')}>
+              Чат с поддержкой
+            </button>
+          )}
+          <button type="button" onClick={() => handleNavigate('/about')}>
             О нас
-          </a>
-          <a href="/contacts" onClick={toggleMenu}>
+          </button>
+          <button type="button" onClick={() => handleNavigate('/contacts')}>
             Контакты
-          </a>
-          {userStatus === 'logged' && <LogoutButton onClick={toggleMenu} />}
+          </button>
+          {userStatus === 'logged' && <LogoutButton onClick={() => setIsOpen(false)} />}
         </div>
       )}
     </nav>

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { UserWithoutPassword } from "./type";
-import { loginUsers, logoutThunk, registerUser } from "./thunks";
+import { loginUsers, logoutThunk, refreshThunk, registerUser } from "./thunks";
 
 
 export type UserState = {
@@ -31,6 +31,27 @@ export const userSlice = createSlice({
         state.isLogin = true;
       })
       .addCase(registerUser.rejected, (state, action) => {
+        state.error = action.error.message ?? 'Странная ошибка';
+        state.isLogin = false;
+      });
+      builder
+      .addCase(refreshThunk.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(refreshThunk.fulfilled, (state, action) => {
+        const admin = action.payload;
+        if (admin) {
+          const existingIndex = state.users.findIndex(({ id }) => id === admin.id);
+          if (existingIndex !== -1) {
+            state.users[existingIndex] = admin;
+          } else {
+            state.users.push(admin);
+          }
+          state.isLogin = true;
+          state.error = null;
+        }
+      })
+      .addCase(refreshThunk.rejected, (state, action) => {
         state.error = action.error.message ?? 'Странная ошибка';
         state.isLogin = false;
       });

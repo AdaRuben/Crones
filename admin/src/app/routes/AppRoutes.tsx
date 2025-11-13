@@ -1,16 +1,16 @@
-import SigninPage from '@/features/auth/signin/SigninPage';
-import SignUp from '@/features/auth/signup/SignUp';
-import MainPage from '@/pages/MainPage';
 import React, { useEffect } from 'react';
 import { Route, Routes } from 'react-router';
 import Layout from '../Layout';
-import { useAppDispatch, useAppSelector } from '@/shared/hooks';
+import MainPage from '@/pages/MainPage';
+import SigninPage from '@/features/auth/signin/SigninPage';
+import SignUp from '@/features/auth/signup/SignUp';
+import SupportChatPage from '@/pages/SupportChatPage';
 import ProtectedRoute from '@/shared/protectedRoute';
+import { useAppDispatch, useAppSelector } from '@/shared/hooks';
 import { refreshThunk } from '@/entities/user/model/thunks';
 
-
 export default function AppRoutes(): React.JSX.Element {
-  const user = useAppSelector(state => state.user.isLogin);
+  const isLogin = useAppSelector((state) => state.user.isLogin);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -18,12 +18,22 @@ export default function AppRoutes(): React.JSX.Element {
   }, [dispatch]);
 
   return (
-     <Routes>
+    <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<MainPage />} />
-        <Route element={<ProtectedRoute isAllowed={!user} redirectTo="/" />}>
-        <Route path="/signin" element={<SigninPage />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute isAllowed={isLogin} redirectTo="/signin">
+              <MainPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route element={<ProtectedRoute isAllowed={!isLogin} redirectTo="/" />}>
+          <Route path="/signin" element={<SigninPage />} />
+          <Route path="/signup" element={<SignUp />} />
+        </Route>
+        <Route element={<ProtectedRoute isAllowed={isLogin} redirectTo="/signin" />}>
+          <Route path="/support" element={<SupportChatPage />} />
         </Route>
       </Route>
     </Routes>
