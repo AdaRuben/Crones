@@ -60,7 +60,7 @@ export default function MainPage(): React.JSX.Element {
 
       // Добавляем контролы (под navbar, который занимает ~80px)
       (ymap as unknown as { controls: { add: (name: string, options?: object) => void } }).controls.add('zoomControl', {
-        position: { top: 130, right: 10 },
+        position: { top: 70, right: 10 },
       });
 
       (ymap as unknown as { controls: { add: (name: string, options?: object) => void } }).controls.add('geolocationControl', {

@@ -10,9 +10,10 @@ export default function OrderCards({
   actions,
 }: {
   order: Order;
-  actions: React.ReactNode;
+  actions?: React.ReactNode;
 }): React.JSX.Element {
   const dispatch = useAppDispatch();
+  // console.log(order);
 
   const formatDate = (date: Date | string | null | undefined): string => {
     const options: Intl.DateTimeFormatOptions = {
@@ -22,21 +23,20 @@ export default function OrderCards({
       day: 'numeric',
     };
     if (!date) return '-';
-    console.log(date);
+    // console.log(date);
 
     return new Date(date).toLocaleDateString('ru-RU', options);
   };
 
   const handleStatusChange = async (newStatus: Order['status']) => {
-
     dispatch(setStatus({ id: order.id, status: newStatus }));
-    
+
     try {
       await dispatch(
         editOrder({
           id: order.id,
           order: { ...order, status: newStatus },
-        })
+        }),
       ).unwrap();
     } catch (error) {
       console.error('Ошибка при обновлении статуса:', error);
@@ -58,11 +58,7 @@ export default function OrderCards({
                 <p>Стоимость: {order.totalCost}</p>
                 <p>
                   Стасус заявки:{' '}
-                  <Select
-                    value={order.status}
-                    style={{ width: 150 }}
-                    onChange={handleStatusChange}
-                  >
+                  <Select value={order.status} style={{ width: 150 }} onChange={handleStatusChange}>
                     <Select.Option value="new">Новый</Select.Option>
                     <Select.Option value="in process">В процессе</Select.Option>
                     <Select.Option value="finished">Завершен</Select.Option>
@@ -78,7 +74,7 @@ export default function OrderCards({
               </>
             }
           />
-          <div style={{ marginTop: 16 }}>{actions}</div>
+          {actions && <div style={{ marginTop: 16 }}>{actions}</div>}
         </Card>
       </Flex>
     </>
