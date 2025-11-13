@@ -26,6 +26,8 @@ import {
   CommentOutlined,
   EditOutlined,
   StopOutlined,
+  UserOutlined,
+  PhoneOutlined,
 } from '@ant-design/icons';
 import './OrderHistoryPage.css';
 
@@ -157,6 +159,22 @@ export default function OrderHistoryPage(): React.JSX.Element {
                   <Text strong> {order.vehicle}</Text>
                 </div>
 
+                {/* Водитель */}
+                {order.Driver && (
+                  <div>
+                    <Text type="secondary">
+                      <UserOutlined /> Водитель:
+                    </Text>
+                    <div style={{ marginTop: 4 }}>
+                      <Text strong>{order.Driver.name}</Text>
+                      <br />
+                      <Text type="secondary">
+                        <PhoneOutlined /> {order.Driver.phoneNumber}
+                      </Text>
+                    </div>
+                  </div>
+                )}
+
                 {/* Стоимость */}
                 {order.totalCost !== null && (
                   <div>
@@ -207,7 +225,7 @@ export default function OrderHistoryPage(): React.JSX.Element {
                             type="link"
                             size="small"
                             icon={<EditOutlined />}
-                            onClick={() => handleEditComment(order.id, order.customerComment)}
+                            onClick={() => handleEditComment(order.id, order.customerComment ?? '')}
                           >
                             Редактировать
                           </Button>

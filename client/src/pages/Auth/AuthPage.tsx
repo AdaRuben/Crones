@@ -5,8 +5,9 @@ import { useAppDispatch } from '@/shared/api/hooks';
 import { signIn, signUp } from '@/entities/regs/thunks/thunks';
 import { UserLoginSchema, UserRegisterSchema } from '@/entities/regs/types/types';
 import AuthLayout from './components/AuthLayout';
-import SigninForm from './components/SignInForm';
+import SigninForm from './components/SigninForm';
 import SignupForm from './components/SignupForm';
+import './AuthPage.css';
 
 type AuthMode = 'signin' | 'signup';
 

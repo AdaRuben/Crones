@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   clearRoute,
   hideSuggestions,
@@ -9,16 +10,17 @@ import {
 import { fetchGeocode, fetchSuggestions } from '../../entities/maps/thunks/MapThunks';
 import { MAP_CENTER, MOSCOW_BOUNDS, geocodeByCoords } from '../../entities/maps/api/MapApi';
 import { useAppDispatch, useAppSelector } from '../../shared/api/hooks';
-import type { OrderFormValues } from '../../widgets/new-order-field/NewOrderField';
-import OrderForm from '../../widgets/new-order-field/NewOrderField';
+import type { OrderFormValues } from '../../widgets/order-form/OrderForm';
+import OrderForm from '../../widgets/order-form/OrderForm';
 import './MainPage.css';
 import 'antd/dist/reset.css';
 import { newOrderSchema } from '@/entities/orders/types/schema';
 import { createOrder } from '@/entities/orders/model/thunks';
-import { message } from 'antd';
+import { notification } from 'antd';
 import CostCalculation from '@/features/cost-calculation/CostCalculation';
 
 type VehicleLocal = 'Седан' | 'Кроссовер' | 'Внедорожник' | null;
+import { useNavigate } from 'react-router';
 
 export default function MainPage(): React.JSX.Element {
   const auth = useAppSelector((state) => state.auth);
@@ -26,6 +28,9 @@ export default function MainPage(): React.JSX.Element {
   const { activePoint, from, to, suggestions, suggestVisible, routeInfo } = useAppSelector(
     (state) => state.map,
   );
+  const navigate = useNavigate();
+  const [api, contextHolder] = notification.useNotification();
+  const [isFormExpanded, setIsFormExpanded] = useState(false);
 
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<ymaps.Map | null>(null);
@@ -53,7 +58,7 @@ export default function MainPage(): React.JSX.Element {
         {
           center: MAP_CENTER,
           zoom: 12,
-          controls: ['zoomControl', 'geolocationControl'],
+          controls: [],
         },
         {
           suppressMapOpenBlock: true,
@@ -63,6 +68,15 @@ export default function MainPage(): React.JSX.Element {
 
       ymap.options.set('maxZoom', 19);
       ymap.behaviors.enable('drag');
+
+      // Добавляем контролы (под navbar, который занимает ~80px)
+      (ymap as unknown as { controls: { add: (name: string, options?: object) => void } }).controls.add('zoomControl', {
+        position: { top: 130, right: 10 },
+      });
+
+      (ymap as unknown as { controls: { add: (name: string, options?: object) => void } }).controls.add('geolocationControl', {
+        position: { top: 350, right: 10 },
+      });
 
       type YMapClickEvent = HTMLButtonElement & { get: (key: string) => unknown };
 
@@ -114,7 +128,6 @@ export default function MainPage(): React.JSX.Element {
 
         dispatch(
           setRouteInfo({
-   
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
             distance: activeRoute.properties.get('distance').text,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
@@ -143,6 +156,7 @@ export default function MainPage(): React.JSX.Element {
 
   const handleInputFocus = (type: 'from' | 'to') => () => {
     dispatch(setActivePoint(type));
+    setIsFormExpanded(true);
 
     const value = type === 'from' ? from.address : to.address;
     if (ymapsRef.current && value.trim()) {
@@ -163,8 +177,7 @@ export default function MainPage(): React.JSX.Element {
 
   const handleOrderSubmit = async (values: OrderFormValues): Promise<void> => {
     if (!auth.user) {
-
-      message.error('Авторизуйтесь, чтобы оформить заказ');
+      void navigate('/auth');
       return;
     }
     try {
@@ -181,13 +194,25 @@ export default function MainPage(): React.JSX.Element {
         finishedAt: undefined,
       });
       await dispatch(createOrder(orderPayload)).unwrap();
-      setSelectedVehicle(null);
+      api.success({
+        setSelectedVehicle(null);
       setPriceState({ loading: false, error: null, text: null })
-      message.success('Заказ отправлен');
+      message: 'Заказ успешно оформлен!',
+        description:
+          'Ваш заказ отправлен и скоро будет обработан. Отслеживайте статус в разделе "Мои заказы".',
+        placement: 'topRight',
+        duration: 5,
+      });
       dispatch(clearRoute());
+      // void navigate('/history');
     } catch (error) {
       const text = error instanceof Error ? error.message : 'Не удалось создать заказ';
-      message.error(text);
+      api.error({
+        message: 'Ошибка при создании заказа',
+        description: text,
+        placement: 'topRight',
+        duration: 5,
+      });
     }
   };
   const handleClearRoute = (): void => {
@@ -205,6 +230,7 @@ export default function MainPage(): React.JSX.Element {
 
   return (
     <div className="app">
+      {contextHolder}
       <div ref={mapRef} className="map" />
 
       <CostCalculation
@@ -230,6 +256,8 @@ export default function MainPage(): React.JSX.Element {
         onToSelect={handleSelectSuggestion('to')}
         onClear={handleClearRoute}
         onSubmit={handleOrderSubmit}
+        isExpanded={isFormExpanded}
+        onExpandChange={setIsFormExpanded}
         onVehicleChange={setSelectedVehicle}
         priceText={priceText}
       />

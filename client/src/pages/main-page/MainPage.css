@@ -11,6 +11,24 @@ body,
   height: 100%;
 }
 
+/* Убираем курсор ввода везде, кроме инпутов */
+* {
+  cursor: default;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  cursor: text !important;
+}
+
+button,
+a,
+.drag-handle,
+.suggest-list li {
+  cursor: pointer !important;
+}
+
 .app {
   position: relative;
   height: 100vh;
@@ -29,7 +47,7 @@ body,
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 12px;
+  bottom: 0px;
   background: #fff;
   border-radius: 16px 16px 0 0;
   box-shadow: 0 -12px 40px rgba(15, 37, 68, 0.12);
@@ -38,10 +56,31 @@ body,
   flex-direction: column;
   gap: 12px;
   transition: transform 0.3s ease;
-  transform: translateY(calc(100% - 380px));
   max-height: 80vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+.bottom-sheet.collapsed {
+  transform: translateY(calc(100% - 160px));
+}
+
+.bottom-sheet.expanded {
+  transform: translateY(0);
+}
+
+.drag-handle {
+  width: 40px;
+  height: 4px;
+  background: #d1d5db;
+  border-radius: 2px;
+  margin: 0 auto 12px;
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
 }
 
 header {
@@ -65,7 +104,28 @@ header {
 .form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+}
+
+.form-field-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Ant Design Form Item customization */
+.ant-form-item {
+  margin-bottom: 0 !important;
+}
+
+.ant-form-item-label {
+  padding-bottom: 6px !important;
+}
+
+.ant-form-item-label > label {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+  height: auto !important;
 }
 
 .form-field {
@@ -130,7 +190,7 @@ button.secondary {
 
 .suggest-list {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% - 12px);
   left: 0;
   right: 0;
   margin: 0;
@@ -141,7 +201,7 @@ button.secondary {
   box-shadow: 0 12px 32px rgba(15, 37, 68, 0.16);
   max-height: 220px;
   overflow-y: auto;
-  z-index: 10;
+  z-index: 100;
 }
 
 .suggest-list li {

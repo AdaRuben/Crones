@@ -1,0 +1,308 @@
+/* ContactsPage.css */
+
+.contacts-page {
+  height: 100vh;
+  padding-top: 40px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.contacts-hero {
+  padding: 30px 24px 20px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  text-align: center;
+}
+
+.contacts-title {
+  color: #ffd700 !important;
+  font-size: 36px !important;
+  font-weight: bold !important;
+  margin-bottom: 8px !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.contacts-subtitle {
+  color: #ffffff !important;
+  font-weight: 300 !important;
+  margin-top: 0 !important;
+  font-size: 18px !important;
+}
+
+.contacts-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.contacts-intro-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+  border: none;
+}
+
+.contacts-intro-card .ant-card-body {
+  padding: 16px;
+}
+
+.contacts-intro-text {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 8px !important;
+  color: #333;
+}
+
+.contacts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+  flex: 1;
+}
+
+.contact-card {
+  height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  background: #ffffff;
+  border: none;
+}
+
+.contact-card .ant-card-body {
+  padding: 16px;
+}
+
+.contact-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.2);
+}
+
+.contact-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border-radius: 50%;
+  margin-bottom: 8px;
+}
+
+.contact-icon svg {
+  font-size: 20px !important;
+}
+
+.contact-title {
+  color: #1a1a1a !important;
+  font-size: 16px !important;
+  margin-bottom: 8px !important;
+  font-weight: 600 !important;
+}
+
+.contact-content {
+  color: #666 !important;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.4;
+  display: block;
+}
+
+.contact-link {
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.contact-link:hover .contact-content {
+  color: #ffd700 !important;
+}
+
+.contacts-cta-card {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+  border: none;
+}
+
+.contacts-cta-card .ant-card-body {
+  padding: 20px 24px;
+}
+
+.contacts-cta-card h3 {
+  color: #1a1a1a !important;
+  margin-bottom: 8px !important;
+  font-size: 20px !important;
+}
+
+.contacts-cta-card p {
+  color: #333 !important;
+  font-size: 14px !important;
+  margin-bottom: 0 !important;
+}
+
+.cta-phone-link {
+  color: #1a1a1a !important;
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.cta-phone-link:hover {
+  color: #000000 !important;
+  transform: scale(1.05);
+}
+
+/* Ant Design Divider */
+.contacts-content .ant-divider {
+  border-color: rgba(255, 255, 255, 0.2);
+  margin: 16px 0 !important;
+  
+  
+}
+
+.contacts-content .ant-divider-inner-text {
+  background: #1a1a1a;
+  padding: 0 16px;
+  font-size: 14px !important;
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+  .contacts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .contacts-page {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .contacts-hero {
+    padding: 30px 16px 20px;
+  }
+
+  .contacts-title {
+    font-size: 28px !important;
+  }
+
+  .contacts-subtitle {
+    font-size: 16px !important;
+  }
+
+  .contacts-content {
+    padding: 16px;
+  }
+
+  .contacts-intro-card .ant-card-body {
+    padding: 12px;
+  }
+
+  .contacts-intro-text {
+    font-size: 13px;
+  }
+
+  .contacts-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .contact-card .ant-card-body {
+    padding: 12px;
+  }
+
+  .contact-title {
+    font-size: 14px !important;
+  }
+
+  .contact-content {
+    font-size: 11px;
+  }
+
+  .contacts-cta-card .ant-card-body {
+    padding: 16px;
+  }
+
+  .cta-phone-link {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .contacts-hero {
+    padding: 20px 12px 15px;
+  }
+
+  .contacts-title {
+    font-size: 24px !important;
+  }
+
+  .contacts-subtitle {
+    font-size: 14px !important;
+  }
+
+  .contacts-content {
+    padding: 12px;
+  }
+
+  .contacts-intro-card .ant-card-body {
+    padding: 10px;
+  }
+
+  .contact-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .contact-icon svg {
+    font-size: 16px !important;
+  }
+
+  .contacts-cta-card .ant-card-body {
+    padding: 12px;
+  }
+
+  .cta-phone-link {
+    font-size: 16px;
+  }
+}
+
+/* Темная тема */
+@media (prefers-color-scheme: dark) {
+  .contacts-intro-card,
+  .contact-card {
+    background: #1f1f1f;
+    border-color: #303030;
+  }
+
+  .contacts-intro-text {
+    color: #e0e0e0;
+  }
+
+  .contact-title {
+    color: #ffffff !important;
+  }
+
+  .contact-content {
+    color: #b0b0b0 !important;
+  }
+
+  .contact-link:hover .contact-content {
+    color: #ffd700 !important;
+  }
+
+  .contact-card:hover {
+    box-shadow: 0 8px 24px rgba(255, 215, 0, 0.3);
+  }
+}
