@@ -5,7 +5,7 @@ class MailService {
     console.log(order);
     
     const adminEmail = process.env.ADMIN_EMAIL;
-    if (!adminEmail) return;
+    // if (!adminEmail) return;
 
     await transporter.sendMail({
       from: `"Crones" <${process.env.SMTP_USER}>`,
