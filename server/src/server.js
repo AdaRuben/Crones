@@ -1,8 +1,10 @@
 require('dotenv').config();
+require('./giga');
 const http = require('http');
 const { Server } = require('socket.io');
 const app = require('./app');
 const { initSupportChat } = require('./socket/supportChat');
+
 
 const PORT = process.env.PORT || 3000;
 const rawOrigins = process.env.SOCKET_ALLOWED_ORIGINS;

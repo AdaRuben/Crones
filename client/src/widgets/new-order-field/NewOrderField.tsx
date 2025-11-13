@@ -2,7 +2,7 @@ import { Form, Input, Select } from 'antd';
 import { useEffect, useMemo } from 'react';
 import type { ActivePoint, RouteInfo, Suggestion } from '@/entities/maps/types/MapTypes';
 
-type VehicleType = 'Кроссовер' | 'Седан';
+type VehicleType = 'Кроссовер' | 'Седан' | 'Внедорожник'
 
 export type OrderFormValues = {
   vehicle: VehicleType | null;
@@ -28,6 +28,8 @@ type OrderFormProps = {
   onToSelect: (value: string) => void;
   onClear: () => void;
   onSubmit: (values: OrderFormValues) => void | Promise<void>;
+  onVehicleChange?: (value: VehicleType | null) => void; 
+  priceText?: string; 
 };
 
 export default function OrderForm({
@@ -47,6 +49,8 @@ export default function OrderForm({
   onToSelect,
   onClear,
   onSubmit,
+  onVehicleChange, 
+  priceText,
 }: OrderFormProps): React.JSX.Element | null {
   const [form] = Form.useForm<OrderFormValues>();
 
@@ -64,6 +68,7 @@ export default function OrderForm({
   const handleClear = (): void => {
     form.resetFields();
     onClear();
+    onVehicleChange?.(null)
   };
 
   const handleValuesChange = (changed: Partial<OrderFormValues>): void => {
@@ -72,6 +77,9 @@ export default function OrderForm({
     }
     if (changed.toAddress !== undefined) {
       onToChange(changed.toAddress);
+    }
+    if (Object.prototype.hasOwnProperty.call(changed, 'vehicle')) {
+      onVehicleChange?.(changed.vehicle ?? null); 
     }
   };
 
@@ -86,6 +94,7 @@ export default function OrderForm({
             <span>{routeInfo.time}</span>
           </div>
         )}
+        {priceText && <div className="route-info">{priceText}</div>}
       </header>
 
       <Form<OrderFormValues>
@@ -153,6 +162,7 @@ export default function OrderForm({
             options={[
               { value: 'Кроссовер', label: 'Кроссовер' },
               { value: 'Седан', label: 'Седан' },
+              { value: 'Внедорожник', label: 'Внедорожник' },
             ]}
           />
         </Form.Item>
