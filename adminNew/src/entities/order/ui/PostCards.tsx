@@ -140,10 +140,17 @@ export default function OrderCards({
               <>
 
                 <Button onClick={handleEdit}><EditOutlined /></Button>
-                {visibleEdit ? 
+                {visibleEdit ?
                 <EditOrder setVisibleEdit={setVisibleEdit} editing={editing}/>
                 :
                 <>
+                {order.Customer && (
+                  <div style={{ marginBottom: 16, padding: 12, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
+                    <strong>Информация о заказчике:</strong>
+                    <p style={{ margin: '4px 0' }}>Имя: {order.Customer.name}</p>
+                    <p style={{ margin: '4px 0' }}>Телефон: {order.Customer.phoneNumber}</p>
+                  </div>
+                )}
                 <p>Откуда: {order.from}</p>
                 <p>Куда: {order.to}</p>
                 <p>Стоимость: {order.totalCost}</p>
