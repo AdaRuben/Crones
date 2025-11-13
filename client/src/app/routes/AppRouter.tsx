@@ -8,6 +8,8 @@ import ContactsPage from '@/pages/contacts/ContactsPage';
 import AuthPage from '@/pages/Auth/AuthPage';
 import ProtectedRoute from '@/shared/lib/ProtectedRoute';
 import { refresh } from '@/entities/regs/thunks/thunks';
+import OrderHistoryPage from '@/pages/order-history/OrderHistoryPage';
+import SupportChatPage from '@/pages/support-chat/SupportChatPage';
 
 export default function AppRouter(): React.JSX.Element {
   const userStatus = useAppSelector((store) => store.auth.status);
@@ -26,12 +28,14 @@ export default function AppRouter(): React.JSX.Element {
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<MainPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contacts" element={<ContactsPage />} />
         <Route element={<ProtectedRoute isAllowed={userStatus !== 'logged'} redirectTo="/" />}>
           <Route path="/auth" element={<AuthPage />} />
         </Route>
-        <Route element={<ProtectedRoute isAllowed={userStatus === 'logged'} redirectTo="/" />}>
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contacts" element={<ContactsPage />} />
+        <Route element={<ProtectedRoute isAllowed={userStatus === 'logged'} redirectTo="/auth" />}>
+          <Route path="/history" element={<OrderHistoryPage />} />
+          <Route path="/support" element={<SupportChatPage />} />
         </Route>
       </Route>
     </Routes>

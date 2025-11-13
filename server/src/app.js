@@ -9,6 +9,7 @@ const orderRouter = require('./routes/order.routes');
 const customerOrderRouter = require('./routes/customerOrder.routes');
 
 const authRouter = require('./routes/auth.routes');
+const supportChatRouter = require('./routes/supportChat.routes');
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use('/api/admin', adminAuthRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/customer/orders', customerOrderRouter);
+app.use('/api/support/chat', supportChatRouter);
 
 module.exports = app;
