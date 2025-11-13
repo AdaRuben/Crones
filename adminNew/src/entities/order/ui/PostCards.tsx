@@ -46,6 +46,11 @@ export default function OrderCards({
       setVisibleEdit(true);
     }
   const handleStatusChange = async (newStatus: Order['status']): Promise<void> => {
+    // Validation: cannot move new -> finished (must go through in process)
+    if (order.status === 'new' && newStatus === 'finished') {
+      notification.error({ message: 'Новый заказ нельзя сразу перевести в статус Завершен. Сначала переведите в статус "В процессе".' });
+      return;
+    }
     // Validation: finished requires payment
     if (newStatus === 'finished' && !order.isPaid) {
       notification.error({ message: 'Нельзя завершить неоплаченный заказ.' });
