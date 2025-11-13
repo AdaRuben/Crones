@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Order, newOrder } from '../model/type';
 import { Button, Card, Flex, Select, App } from 'antd';
 import { useAppDispatch } from '@/shared/hooks';
@@ -24,6 +24,10 @@ export default function OrderCards({
   const [pendingStatus, setPendingStatus] = useState<Order['status'] | null>(null);
   const { notification } = App.useApp();
 
+  useEffect(() => {
+    console.log('👁️ visibleEdit изменился:', visibleEdit);
+  }, [visibleEdit]);
+
   const formatDate = (date: Date | string | null | undefined): string => {
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
@@ -37,6 +41,7 @@ export default function OrderCards({
   };
 
   const handleEdit = (): void => {
+      console.log('📝 Открытие формы редактирования', order.id);
       setEditing(order);
       setVisibleEdit(true);
     }

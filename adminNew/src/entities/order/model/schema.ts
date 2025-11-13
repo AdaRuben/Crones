@@ -23,7 +23,7 @@ export const orderSchema = z.object({
 });
 
 
-export const ordernewSchema = orderSchema.omit({id: true});
+export const ordernewSchema = orderSchema.omit({id: true, Customer: true});
 
 export const editOrderSchema = z.object({
     status: z.string(),

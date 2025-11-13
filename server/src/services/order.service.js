@@ -28,11 +28,18 @@ class OrderService {
   }
 
   static async updateOrder(id, order) {
-    const updatedOrder = await Order.findByPk(id);
+    const updatedOrder = await Order.findByPk(id, {
+      include: [
+        { model: Customer, attributes: ['name', 'phoneNumber'] },
+        { model: Driver, attributes: ['name', 'phoneNumber'] },
+      ],
+    });
     if (!updatedOrder) {
       throw new Error('Order not found');
     }
-    return updatedOrder.update(order);
+    await updatedOrder.update(order);
+    // Reload to get fresh data with associations
+    return updatedOrder.reload();
   }
 
   static async deleteCancelledOrder(id) {

@@ -50,7 +50,12 @@ export const orderSlice = createSlice({
           (order) => order.id === action.payload.id
         );
         if (index !== -1) {
-          state.orders[index] = action.payload;
+          // Preserve Customer data if it exists in the old order but not in the new one
+          const oldCustomer = state.orders[index].Customer;
+          state.orders[index] = {
+            ...action.payload,
+            Customer: action.payload.Customer ?? oldCustomer,
+          };
         }
         state.error = null;
       })
