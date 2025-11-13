@@ -14,7 +14,7 @@
   totalCost: number | null;
   status: 'new' | 'in process' | 'finished' | 'cancelled';
   isPaid: boolean | null;
-  vehicle: 'Кроссовер' | 'Седан';
+  vehicle: 'Кроссовер' | 'Седан' |'Внедорожник';
   customerComment?: string;
   adminComment?: string;
   finishedAt?: Date;

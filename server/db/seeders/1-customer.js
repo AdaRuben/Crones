@@ -10,7 +10,7 @@ module.exports = {
       [
         {
           name: 'Иван Иванов',
-          phoneNumber: '+79991112233',
+          phoneNumber: '+79999999999',
           hashpass: await bcrypt.hash('kekkek', 10),
           createdAt: new Date(),
           updatedAt: new Date(),

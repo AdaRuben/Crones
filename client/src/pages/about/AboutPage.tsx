@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Card, List, Space, Divider } from 'antd';
+import { Typography, Card, List, Space } from 'antd';
 import {
   DollarOutlined,
   ThunderboltOutlined,
@@ -29,7 +29,8 @@ export default function AboutPage(): React.JSX.Element {
     {
       icon: <SafetyCertificateOutlined style={{ fontSize: '24px', color: '#ffd700' }} />,
       title: 'Опытные водители',
-      description: 'Водителей, имеющих большой опыт в эвакуации автомобилей, профессионалов своего дела',
+      description:
+        'Водителей, имеющих большой опыт в эвакуации автомобилей, профессионалов своего дела',
     },
     {
       icon: <HeartOutlined style={{ fontSize: '24px', color: '#ffd700' }} />,
@@ -70,17 +71,14 @@ export default function AboutPage(): React.JSX.Element {
             </Text>
           </Paragraph>
           <Paragraph className="about-intro-text">
-            Работаем <Text strong>24/7</Text>, свои водители, <Text strong type="warning">НЕ ПОСРЕДНИКИ</Text>,
-            поэтому имеем возможность предлагать очень интересные цены, трепетно относиться к каждой
-            эвакуации и предоставлять максимально качественный сервис.
+            Работаем <Text strong>24/7</Text>, свои водители,{' '}
+            <Text strong type="warning">
+              НЕ ПОСРЕДНИКИ
+            </Text>
+            , поэтому имеем возможность предлагать очень интересные цены, трепетно относиться к
+            каждой эвакуации и предоставлять максимально качественный сервис.
           </Paragraph>
         </Card>
-
-        <Divider>
-          <Text type="secondary" style={{ fontSize: '16px' }}>
-            Что мы предлагаем
-          </Text>
-        </Divider>
 
         <List
           grid={{
@@ -115,8 +113,9 @@ export default function AboutPage(): React.JSX.Element {
             <CheckCircleOutlined style={{ fontSize: '48px', color: '#52c41a' }} />
             <Title level={3}>Профессиональный сервис</Title>
             <Paragraph style={{ fontSize: '16px' }}>
-              Мы гарантируем высокое качество обслуживания и индивидуальный подход к каждому клиенту.
-              Наша команда профессионалов всегда готова прийти на помощь в любое время суток.
+              Мы гарантируем высокое качество обслуживания и индивидуальный подход к каждому
+              клиенту. Наша команда профессионалов всегда готова прийти на помощь в любое время
+              суток.
             </Paragraph>
           </Space>
         </Card>
