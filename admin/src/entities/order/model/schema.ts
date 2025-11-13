@@ -5,14 +5,14 @@ export const orderSchema = z.object({
     customerId: z.number(),
     from: z.string(),
     to: z.string(),
-    totalCost: z.string(),
+    totalCost: z.coerce.number().nullable(),
     status: z.string(),
-    isPaid: z.boolean(),    
+    isPaid: z.boolean().nullable(),
     vehicle: z.string(),
     adminComment: z.string().nullable(),
     customerComment: z.string().nullable(),
-    finishedAt: z.string().nullable(),
-    createdAt: z.string(),
+    finishedAt: z.coerce.date().nullable(),
+    createdAt: z.coerce.date(),
 });
 
 export const ordernewSchema = orderSchema.omit({id: true});
