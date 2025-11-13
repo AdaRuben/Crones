@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useEffect, useRef, useState } from 'react';
 import {
   clearRoute,
   hideSuggestions,
@@ -195,15 +194,15 @@ export default function MainPage(): React.JSX.Element {
       });
       await dispatch(createOrder(orderPayload)).unwrap();
       api.success({
-        setSelectedVehicle(null);
-      setPriceState({ loading: false, error: null, text: null })
-      message: 'Заказ успешно оформлен!',
+        message: 'Заказ успешно оформлен!',
         description:
-          'Ваш заказ отправлен и скоро будет обработан. Отслеживайте статус в разделе "Мои заказы".',
+        'Ваш заказ отправлен и скоро будет обработан. Отслеживайте статус в разделе "Мои заказы".',
         placement: 'topRight',
         duration: 5,
       });
       dispatch(clearRoute());
+      setSelectedVehicle(null);
+      setPriceState({ loading: false, error: null, text: null });
       // void navigate('/history');
     } catch (error) {
       const text = error instanceof Error ? error.message : 'Не удалось создать заказ';

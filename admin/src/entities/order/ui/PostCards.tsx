@@ -1,9 +1,13 @@
-import React from 'react';
-import type { Order } from '../model/type';
-import { Card, Flex, Select } from 'antd';
+import React, { useState } from 'react';
+import type { Order, newOrder } from '../model/type';
+import { Button, Card, Flex, Select, App } from 'antd';
 import { useAppDispatch } from '@/shared/hooks';
 import { setStatus } from '../model/slice';
 import { editOrder } from '../model/thunks';
+import { EditOutlined } from '@ant-design/icons';
+import EditOrder from '@/features/editStatus/EditOrder';
+import ChoiceDriver from '@/features/choiseDriver/ChoiceDriver';
+
 
 export default function OrderCards({
   order,
@@ -12,7 +16,13 @@ export default function OrderCards({
   order: Order;
   actions: React.ReactNode;
 }): React.JSX.Element {
+
   const dispatch = useAppDispatch();
+  const [visibleEdit, setVisibleEdit] = useState(false);
+  const [editing, setEditing] = useState<Order | null>(null);
+  const [chooseDriverOpen, setChooseDriverOpen] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<Order['status'] | null>(null);
+  const { notification } = App.useApp();
 
   const formatDate = (date: Date | string | null | undefined): string => {
     const options: Intl.DateTimeFormatOptions = {
@@ -22,26 +32,101 @@ export default function OrderCards({
       day: 'numeric',
     };
     if (!date) return '-';
-    console.log(date);
 
     return new Date(date).toLocaleDateString('ru-RU', options);
   };
 
-  const handleStatusChange = async (newStatus: Order['status']) => {
+  const handleEdit = (): void => {
+      setEditing(order);
+      setVisibleEdit(true);
+    }
+  const handleStatusChange = async (newStatus: Order['status']): Promise<void> => {
+    // Validation: finished requires payment
+    if (newStatus === 'finished' && !order.isPaid) {
+      notification.error({ message: 'Нельзя завершить неоплаченный заказ.' });
+      return;
+    }
+    // Validation: cannot move finished -> new
+    if (order.status === 'finished' && newStatus === 'new') {
+      notification.error({ message: 'Завершенный заказ нельзя перевести в статус Новый.' });
+      return;
+    }
+    // If switching to in process and no driver assigned -> open modal
+    if (newStatus === 'in process' && (order.driverId == null)) {
+      setPendingStatus(newStatus);
+      setChooseDriverOpen(true);
+      return;
+    }
 
     dispatch(setStatus({ id: order.id, status: newStatus }));
-    
+
     try {
+      const orderBody: newOrder = {
+        customerId: order.customerId,
+        driverId: order.driverId ?? null,
+        from: order.from,
+        to: order.to,
+        totalCost: order.totalCost,
+        status: newStatus,
+        isPaid: order.isPaid,
+        vehicle: order.vehicle,
+        adminComment: order.adminComment,
+        customerComment: order.customerComment,
+        finishedAt: order.finishedAt,
+        createdAt: order.createdAt,
+      };
       await dispatch(
         editOrder({
           id: order.id,
-          order: { ...order, status: newStatus },
+          order: orderBody,
         })
       ).unwrap();
-    } catch (error) {
-      console.error('Ошибка при обновлении статуса:', error);
-
+      notification.success({ message: 'Статус заказа обновлен' });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error('Ошибка при обновлении статуса:', msg);
+      notification.error({ message: 'Ошибка при обновлении статуса' });
       dispatch(setStatus({ id: order.id, status: order.status }));
+    }
+  };
+
+  const handleDriverSelected = async (driverId: number): Promise<void> => {
+    if (!pendingStatus) {
+      setChooseDriverOpen(false);
+      return;
+    }
+    setChooseDriverOpen(false);
+    // Optimistically set status
+    dispatch(setStatus({ id: order.id, status: pendingStatus }));
+    try {
+      const orderBody: newOrder = {
+        customerId: order.customerId,
+        driverId,
+        from: order.from,
+        to: order.to,
+        totalCost: order.totalCost,
+        status: pendingStatus,
+        isPaid: order.isPaid,
+        vehicle: order.vehicle,
+        adminComment: order.adminComment,
+        customerComment: order.customerComment,
+        finishedAt: order.finishedAt,
+        createdAt: order.createdAt,
+      };
+      await dispatch(
+        editOrder({
+          id: order.id,
+          order: orderBody,
+        })
+      ).unwrap();
+      notification.success({ message: 'Водитель назначен, статус обновлен' });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error('Ошибка при назначении водителя:', msg);
+      notification.error({ message: 'Не удалось назначить водителя' });
+      dispatch(setStatus({ id: order.id, status: order.status }));
+    } finally {
+      setPendingStatus(null);
     }
   };
 
@@ -53,34 +138,51 @@ export default function OrderCards({
             title={`Заказ №${order.id.toString()}`}
             description={
               <>
+
+                <Button onClick={handleEdit}><EditOutlined /></Button>
+                {visibleEdit ? 
+                <EditOrder setVisibleEdit={setVisibleEdit} editing={editing}/>
+                :
+                <>
                 <p>Откуда: {order.from}</p>
                 <p>Куда: {order.to}</p>
                 <p>Стоимость: {order.totalCost}</p>
-                <p>
-                  Стасус заявки:{' '}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span>Статус заявки:</span>
                   <Select
-                    value={order.status}
-                    style={{ width: 150 }}
-                    onChange={handleStatusChange}
+                  value={order.status}
+                  style={{ width: 150 }}
+                  onChange={handleStatusChange}
                   >
                     <Select.Option value="new">Новый</Select.Option>
                     <Select.Option value="in process">В процессе</Select.Option>
                     <Select.Option value="finished">Завершен</Select.Option>
                     <Select.Option value="cancelled">Отменен</Select.Option>
-                  </Select>
-                </p>
+                    </Select>
+                    </div>
                 <p>Оплачено: {order.isPaid ? 'Да' : 'Нет'}</p>
                 <p>Тип кузова: {order.vehicle}</p>
                 <p>Комментарий от заказчика: {order.customerComment}</p>
                 <p>Примечание администратора: {order.adminComment}</p>
                 <p>Дата завершения: {formatDate(order.finishedAt)}</p>
                 <p>Дата создания: {formatDate(order.createdAt)}</p>
+                </>
+              }
               </>
             }
           />
           <div style={{ marginTop: 16 }}>{actions}</div>
         </Card>
       </Flex>
+      <ChoiceDriver
+        open={chooseDriverOpen}
+        onCancel={() => {
+          setChooseDriverOpen(false);
+          setPendingStatus(null);
+          notification.info({ message: 'Назначение водителя отменено' });
+        }}
+        onSelect={handleDriverSelected}
+      />
     </>
   );
 }
