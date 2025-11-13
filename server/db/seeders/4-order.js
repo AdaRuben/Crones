@@ -44,7 +44,7 @@ module.exports = {
           totalCost: 900,
           status: 'finished',
           isPaid: true,
-          vehicle: 'Кроссовер',
+          vehicle: 'Внедорожник',
           customerComment: 'Позвоните по приезду',
           adminComment: 'Завершено успешно',
           finishedAt: new Date(),
