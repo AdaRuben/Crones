@@ -8,11 +8,11 @@ const httpsAgent = new Agent({
 }); 
 
 const client = new GigaChat({
-  timeout: 3000,
+  timeout: 10000,
   model: 'GigaChat-Pro',
   credentials: process.env.GIGACHAT_API_KEY,
   httpsAgent,
-}); 
+});
 
 const SYSTEM_PROMPT = `Ты — агент, который рассчитывает стоимость услуги эвакуатора.
 
