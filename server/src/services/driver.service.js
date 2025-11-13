@@ -3,12 +3,7 @@ const { Driver, Order } = require('../../db/models');
 class DriverService {
   static async getAllDrivers() {
     return Driver.findAll({
-      include: [
-        {
-          model: Order,
-          as: 'Orders',
-        },
-      ],
+      attributes: ['id', 'name', 'phoneNumber'],
     });
   }
 

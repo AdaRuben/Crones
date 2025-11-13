@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Order, newOrder } from '../model/type';
 import { Button, Card, Flex, Select, App } from 'antd';
 import { useAppDispatch } from '@/shared/hooks';
@@ -24,6 +24,10 @@ export default function OrderCards({
   const [pendingStatus, setPendingStatus] = useState<Order['status'] | null>(null);
   const { notification } = App.useApp();
 
+  useEffect(() => {
+    console.log('👁️ visibleEdit изменился:', visibleEdit);
+  }, [visibleEdit]);
+
   const formatDate = (date: Date | string | null | undefined): string => {
     const options: Intl.DateTimeFormatOptions = {
       weekday: 'long',
@@ -37,6 +41,7 @@ export default function OrderCards({
   };
 
   const handleEdit = (): void => {
+      console.log('📝 Открытие формы редактирования', order.id);
       setEditing(order);
       setVisibleEdit(true);
     }
@@ -140,10 +145,24 @@ export default function OrderCards({
               <>
 
                 <Button onClick={handleEdit}><EditOutlined /></Button>
-                {visibleEdit ? 
+                {visibleEdit ?
                 <EditOrder setVisibleEdit={setVisibleEdit} editing={editing}/>
                 :
                 <>
+                {order.Customer && (
+                  <div style={{ marginBottom: 16, padding: 12, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
+                    <strong>Информация о заказчике:</strong>
+                    <p style={{ margin: '4px 0' }}>Имя: {order.Customer.name}</p>
+                    <p style={{ margin: '4px 0' }}>Телефон: {order.Customer.phoneNumber}</p>
+                  </div>
+                )}
+                {order.Driver && (
+                  <div style={{ marginBottom: 16, padding: 12, backgroundColor: '#e6f7ff', borderRadius: 4 }}>
+                    <strong>Информация о водителе:</strong>
+                    <p style={{ margin: '4px 0' }}>Имя: {order.Driver.name}</p>
+                    <p style={{ margin: '4px 0' }}>Телефон: {order.Driver.phoneNumber}</p>
+                  </div>
+                )}
                 <p>Откуда: {order.from}</p>
                 <p>Куда: {order.to}</p>
                 <p>Стоимость: {order.totalCost}</p>
