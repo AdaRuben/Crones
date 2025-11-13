@@ -50,11 +50,13 @@ export const orderSlice = createSlice({
           (order) => order.id === action.payload.id
         );
         if (index !== -1) {
-          // Preserve Customer data if it exists in the old order but not in the new one
+          // Preserve Customer and Driver data if they exist in the old order but not in the new one
           const oldCustomer = state.orders[index].Customer;
+          const oldDriver = state.orders[index].Driver;
           state.orders[index] = {
             ...action.payload,
             Customer: action.payload.Customer ?? oldCustomer,
+            Driver: action.payload.Driver ?? oldDriver,
           };
         }
         state.error = null;

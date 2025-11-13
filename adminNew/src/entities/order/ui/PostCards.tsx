@@ -156,6 +156,13 @@ export default function OrderCards({
                     <p style={{ margin: '4px 0' }}>Телефон: {order.Customer.phoneNumber}</p>
                   </div>
                 )}
+                {order.Driver && (
+                  <div style={{ marginBottom: 16, padding: 12, backgroundColor: '#e6f7ff', borderRadius: 4 }}>
+                    <strong>Информация о водителе:</strong>
+                    <p style={{ margin: '4px 0' }}>Имя: {order.Driver.name}</p>
+                    <p style={{ margin: '4px 0' }}>Телефон: {order.Driver.phoneNumber}</p>
+                  </div>
+                )}
                 <p>Откуда: {order.from}</p>
                 <p>Куда: {order.to}</p>
                 <p>Стоимость: {order.totalCost}</p>

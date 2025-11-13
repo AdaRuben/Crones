@@ -1,8 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Button, Select, Input, Switch, Form, Space, App } from 'antd';
 import { useAppDispatch } from '@/shared/hooks';
 import type { Order, newOrder } from '@/entities/order/model/type';
 import { editOrder } from '@/entities/order/model/thunks';
+import axiosInstance from '@/shared/axiosInstance';
+
+type Driver = {
+  id: number;
+  name: string;
+  phoneNumber: string;
+};
 
 type EditOrderProps = {
   editing: Order | null;
@@ -16,6 +23,21 @@ export default function EditOrder({
   const dispatch = useAppDispatch();
   const { notification } = App.useApp();
   const [form] = Form.useForm();
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [loadingDrivers, setLoadingDrivers] = useState(false);
+
+  // Загрузка списка водителей
+  useEffect(() => {
+    setLoadingDrivers(true);
+    void axiosInstance
+      .get<Driver[]>('/drivers')
+      .then((res) => setDrivers(res.data))
+      .catch((err) => {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error('Ошибка загрузки водителей:', msg);
+      })
+      .finally(() => setLoadingDrivers(false));
+  }, []);
 
   useEffect(() => {
     if (editing) {
@@ -27,9 +49,19 @@ export default function EditOrder({
         isPaid: editing.isPaid,
         vehicle: editing.vehicle,
         adminComment: editing.adminComment ?? '',
+        driverId: editing.driverId ?? undefined,
       });
     }
   }, [editing, form]);
+
+  const driverOptions = useMemo(
+    () =>
+      drivers.map((d) => ({
+        value: d.id,
+        label: `${d.name} (${d.phoneNumber})`,
+      })),
+    [drivers],
+  );
 
   if (!editing) return null;
 
@@ -42,7 +74,7 @@ export default function EditOrder({
 
       const orderBody: newOrder = {
         customerId: editing.customerId,
-        driverId: editing.driverId ?? null,
+        driverId: values.driverId ?? null,
         from: values.from,
         to: values.to,
         totalCost: values.totalCost,
@@ -132,6 +164,21 @@ export default function EditOrder({
             <Select.Option value="Кроссовер">Кроссовер</Select.Option>
             <Select.Option value="Внедорожник">Внедорожник</Select.Option>
           </Select>
+        </Form.Item>
+
+        <Form.Item
+          label="Водитель"
+          name="driverId"
+        >
+          <Select
+            style={{ width: '100%' }}
+            placeholder="Выберите водителя"
+            loading={loadingDrivers}
+            options={driverOptions}
+            showSearch
+            optionFilterProp="label"
+            allowClear
+          />
         </Form.Item>
 
         <Form.Item label="Примечание администратора" name="adminComment">

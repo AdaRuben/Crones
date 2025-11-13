@@ -5,6 +5,11 @@ export const customerSchema = z.object({
     phoneNumber: z.string(),
 });
 
+export const driverSchema = z.object({
+    name: z.string(),
+    phoneNumber: z.string(),
+});
+
 export const orderSchema = z.object({
     id: z.number(),
     customerId: z.number(),
@@ -20,10 +25,11 @@ export const orderSchema = z.object({
     finishedAt: z.string().nullable(),
     createdAt: z.string(),
     Customer: customerSchema.nullable().optional(),
+    Driver: driverSchema.nullable().optional(),
 });
 
 
-export const ordernewSchema = orderSchema.omit({id: true, Customer: true});
+export const ordernewSchema = orderSchema.omit({id: true, Customer: true, Driver: true});
 
 export const editOrderSchema = z.object({
     status: z.string(),
