@@ -45,7 +45,7 @@ module.exports = {
         defaultValue: false,
       },
       vehicle: {
-        type: Sequelize.ENUM('Кроссовер', 'Седан'),
+        type: Sequelize.ENUM('Седан', 'Кроссовер', 'Внедорожник'),
       },
       customerComment: {
         type: Sequelize.TEXT,

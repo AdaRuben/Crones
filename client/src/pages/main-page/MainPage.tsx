@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   clearRoute,
   hideSuggestions,
@@ -9,8 +9,8 @@ import {
 import { fetchGeocode, fetchSuggestions } from '../../entities/maps/thunks/MapThunks';
 import { MAP_CENTER, MOSCOW_BOUNDS, geocodeByCoords } from '../../entities/maps/api/MapApi';
 import { useAppDispatch, useAppSelector } from '../../shared/api/hooks';
-import type { OrderFormValues } from '../../widgets/new-order-field/NewOrderField';
-import OrderForm from '../../widgets/new-order-field/NewOrderField';
+import type { OrderFormValues } from '../../widgets/order-form/OrderForm';
+import OrderForm from '../../widgets/order-form/OrderForm';
 import './MainPage.css';
 import 'antd/dist/reset.css';
 import { newOrderSchema } from '@/entities/orders/types/schema';
@@ -26,6 +26,7 @@ export default function MainPage(): React.JSX.Element {
   );
   const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
+  const [isFormExpanded, setIsFormExpanded] = useState(false);
 
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<ymaps.Map | null>(null);
@@ -46,7 +47,7 @@ export default function MainPage(): React.JSX.Element {
         {
           center: MAP_CENTER,
           zoom: 12,
-          controls: ['zoomControl', 'geolocationControl'],
+          controls: [],
         },
         {
           suppressMapOpenBlock: true,
@@ -56,6 +57,15 @@ export default function MainPage(): React.JSX.Element {
 
       ymap.options.set('maxZoom', 19);
       ymap.behaviors.enable('drag');
+
+      // Добавляем контролы (под navbar, который занимает ~80px)
+      (ymap as unknown as { controls: { add: (name: string, options?: object) => void } }).controls.add('zoomControl', {
+        position: { top: 130, right: 10 },
+      });
+
+      (ymap as unknown as { controls: { add: (name: string, options?: object) => void } }).controls.add('geolocationControl', {
+        position: { top: 350, right: 10 },
+      });
 
       type YMapClickEvent = HTMLButtonElement & { get: (key: string) => unknown };
 
@@ -134,6 +144,7 @@ export default function MainPage(): React.JSX.Element {
 
   const handleInputFocus = (type: 'from' | 'to') => () => {
     dispatch(setActivePoint(type));
+    setIsFormExpanded(true);
 
     const value = type === 'from' ? from.address : to.address;
     if (ymapsRef.current && value.trim()) {
@@ -179,6 +190,7 @@ export default function MainPage(): React.JSX.Element {
         duration: 5,
       });
       dispatch(clearRoute());
+      // void navigate('/history');
     } catch (error) {
       const text = error instanceof Error ? error.message : 'Не удалось создать заказ';
       api.error({
@@ -214,6 +226,8 @@ export default function MainPage(): React.JSX.Element {
         onToSelect={handleSelectSuggestion('to')}
         onClear={handleClearRoute}
         onSubmit={handleOrderSubmit}
+        isExpanded={isFormExpanded}
+        onExpandChange={setIsFormExpanded}
       />
     </div>
   );

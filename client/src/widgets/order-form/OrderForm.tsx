@@ -1,0 +1,266 @@
+import { Form, Input, Select } from 'antd';
+import { useEffect, useMemo, useState, useRef } from 'react';
+import type { ActivePoint, RouteInfo, Suggestion } from '@/entities/maps/types/MapTypes';
+
+type VehicleType = 'Седан/Кроссовер' | 'Внедорожник';
+
+export type OrderFormValues = {
+  vehicle: VehicleType | null;
+  comment: string;
+  fromAddress: string;
+  toAddress: string;
+};
+
+type OrderFormProps = {
+  routeInfo: RouteInfo;
+  fromAddress: string;
+  toAddress: string;
+  activePoint: ActivePoint;
+  suggestions: Suggestion[];
+  suggestVisible: boolean;
+  onFromChange: (value: string) => void;
+  onToChange: (value: string) => void;
+  onFromFocus: () => void;
+  onToFocus: () => void;
+  onFromBlur: (value: string) => void;
+  onToBlur: (value: string) => void;
+  onFromSelect: (value: string) => void;
+  onToSelect: (value: string) => void;
+  onClear: () => void;
+  onSubmit: (values: OrderFormValues) => void | Promise<void>;
+  isExpanded?: boolean;
+  onExpandChange?: (expanded: boolean) => void;
+};
+
+export default function OrderForm({
+  routeInfo,
+  fromAddress,
+  toAddress,
+  activePoint,
+  suggestions,
+  suggestVisible,
+  onFromChange,
+  onToChange,
+  onFromFocus,
+  onToFocus,
+  onFromBlur,
+  onToBlur,
+  onFromSelect,
+  onToSelect,
+  onClear,
+  onSubmit,
+  isExpanded: externalIsExpanded,
+  onExpandChange,
+}: OrderFormProps): React.JSX.Element | null {
+  const [form] = Form.useForm<OrderFormValues>();
+  const [internalIsExpanded, setInternalIsExpanded] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const startY = useRef(0);
+  const currentY = useRef(0);
+
+  const isExpanded = externalIsExpanded ?? internalIsExpanded;
+  const setIsExpanded = (value: boolean): void => {
+    if (onExpandChange) {
+      onExpandChange(value);
+    } else {
+      setInternalIsExpanded(value);
+    }
+  };
+
+  useEffect(() => {
+    form.setFieldsValue({
+      fromAddress,
+      toAddress,
+    });
+  }, [form, fromAddress, toAddress]);
+
+  const handleFinish = async (values: OrderFormValues): Promise<void> => {
+    await onSubmit(values);
+  };
+
+  const handleClear = (): void => {
+    form.resetFields();
+    onClear();
+  };
+
+  const handleValuesChange = (changed: Partial<OrderFormValues>): void => {
+    if (changed.fromAddress !== undefined) {
+      onFromChange(changed.fromAddress);
+    }
+    if (changed.toAddress !== undefined) {
+      onToChange(changed.toAddress);
+    }
+  };
+
+  const handleDragStart = (clientY: number): void => {
+    setIsDragging(true);
+    startY.current = clientY;
+  };
+
+  const handleDragMove = (clientY: number): void => {
+    if (!isDragging) return;
+    currentY.current = clientY;
+    const diff = startY.current - currentY.current;
+
+    if (diff > 50) {
+      setIsExpanded(true);
+    } else if (diff < -50) {
+      setIsExpanded(false);
+    }
+  };
+
+  const handleDragEnd = (): void => {
+    setIsDragging(false);
+  };
+
+  const handleToggle = (): void => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent): void => {
+    handleDragStart(e.touches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent): void => {
+    handleDragMove(e.touches[0].clientY);
+  };
+
+  const handleTouchEnd = (): void => {
+    handleDragEnd();
+  };
+
+  const handleMouseDown = (e: React.MouseEvent): void => {
+    handleDragStart(e.clientY);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent): void => {
+    handleDragMove(e.clientY);
+  };
+
+  const handleMouseUp = (): void => {
+    handleDragEnd();
+  };
+
+  return (
+    <section
+      className={`bottom-sheet ${isExpanded ? 'expanded' : 'collapsed'}`}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
+      <div
+        className="drag-handle"
+        onClick={handleToggle}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      />
+      <header>
+        <div className="title">Вызов эвакуатора</div>
+        {routeInfo && (
+          <div className="route-info">
+            <span>{routeInfo.distance}</span>
+            <span>•</span>
+            <span>{routeInfo.time}</span>
+          </div>
+        )}
+      </header>
+
+      <Form<OrderFormValues>
+        form={form}
+        layout="vertical"
+        className="form"
+        requiredMark={false}
+        initialValues={useMemo(
+          () => ({ vehicle: null, comment: '', fromAddress, toAddress }),
+          [fromAddress, toAddress],
+        )}
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        onValuesChange={(changedValues) => handleValuesChange(changedValues)}
+        onFinish={handleFinish}
+      >
+        <div className="form-field-wrapper">
+          <Form.Item
+            name="fromAddress"
+            label="Откуда"
+            rules={[{ required: true, message: 'Укажите адрес отправления' }]}
+          >
+            <Input
+              placeholder="Введите адрес отправления"
+              onFocus={onFromFocus}
+              onBlur={(e) => onFromBlur(e.target.value)}
+              onPressEnter={(e) => onFromSelect((e.target as HTMLInputElement).value)}
+              className={activePoint === 'from' ? 'active' : ''}
+            />
+          </Form.Item>
+
+          {suggestVisible && suggestions.length > 0 && activePoint === 'from' && (
+            <ul className="suggest-list">
+              {suggestions.map((item) => (
+                <li key={item.value} onMouseDown={() => onFromSelect(item.value)}>
+                  {item.displayName}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="form-field-wrapper">
+          <Form.Item
+            name="toAddress"
+            label="Куда"
+            rules={[{ required: true, message: 'Укажите адрес назначения' }]}
+          >
+            <Input
+              placeholder="Введите адрес назначения"
+              onFocus={onToFocus}
+              onBlur={(e) => onToBlur(e.target.value)}
+              onPressEnter={(e) => onToSelect((e.target as HTMLInputElement).value)}
+              className={activePoint === 'to' ? 'active' : ''}
+            />
+          </Form.Item>
+
+          {suggestVisible && suggestions.length > 0 && activePoint === 'to' && (
+            <ul className="suggest-list">
+              {suggestions.map((item) => (
+                <li key={item.value} onMouseDown={() => onToSelect(item.value)}>
+                  {item.displayName}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <Form.Item<OrderFormValues['vehicle']>
+          name="vehicle"
+          label="Тип транспорта"
+          rules={[{ required: true, message: 'Выберите тип транспорта' }]}
+        >
+          <Select
+            placeholder="Выберите тип транспорта"
+            allowClear
+            options={[
+              { value: 'Внедорожник', label: 'Внедорожник' },
+              { value: 'Седан', label: 'Седан' },
+              { value: 'Кроссовер', label: 'Кроссовер' },
+            ]}
+          />
+        </Form.Item>
+
+        <Form.Item<OrderFormValues['comment']> name="comment" label="Комментарий">
+          <Input.TextArea placeholder="Введите комментарий к заказу" rows={3} />
+        </Form.Item>
+
+        <footer>
+          <button type="button" className="secondary" onClick={handleClear}>
+            Очистить
+          </button>
+          <button type="submit" className="primary">
+            Заказать
+          </button>
+        </footer>
+      </Form>
+    </section>
+  );
+}

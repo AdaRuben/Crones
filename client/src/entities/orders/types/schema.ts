@@ -15,7 +15,7 @@ export const orderSchema = z.object({
   totalCost: z.coerce.number().nullable(),
   status: z.enum(['new', 'in process', 'finished', 'cancelled']),
   isPaid: z.boolean().nullable(),
-  vehicle: z.enum(['Кроссовер', 'Седан']),
+  vehicle: z.enum(['Кроссовер', 'Седан', 'Внедорожник']),
   customerComment: z.string().nullable().optional(),
   adminComment: z.string().nullable().optional(),
   finishedAt: z.coerce.date().nullable().optional(),
