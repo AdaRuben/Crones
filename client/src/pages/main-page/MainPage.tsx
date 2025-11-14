@@ -17,6 +17,9 @@ import { newOrderSchema } from '@/entities/orders/types/schema';
 import { createOrder } from '@/entities/orders/model/thunks';
 import { notification } from 'antd';
 import { useNavigate } from 'react-router';
+import CostCalculation from '../../features/cost-calculation/CostCalculation';
+
+type VehicleLocal = 'Седан' | 'Кроссовер' | 'Внедорожник' | null;
 
 export default function MainPage(): React.JSX.Element {
   const auth = useAppSelector((state) => state.auth);
@@ -33,6 +36,13 @@ export default function MainPage(): React.JSX.Element {
   const routeRef = useRef<ymaps.multiRouter.MultiRoute | null>(null);
   const ymapsRef = useRef<typeof ymaps | null>(null);
   const activePointRef = useRef(activePoint);
+
+  const [selectedVehicle, setSelectedVehicle] = useState<VehicleLocal>(null); 
+  const [priceState, setPriceState] = useState<{ loading: boolean; error: string | null; text: string | null }>({
+    loading: false,
+    error: null,
+    text: null,
+  });
 
   useEffect(() => {
     activePointRef.current = activePoint;
@@ -100,6 +110,7 @@ export default function MainPage(): React.JSX.Element {
         routeRef.current = null;
       }
       dispatch(setRouteInfo(null));
+      setPriceState({ loading: false, error: null, text: null });
       return;
     }
 
@@ -190,6 +201,7 @@ export default function MainPage(): React.JSX.Element {
         duration: 5,
       });
       dispatch(clearRoute());
+      setSelectedVehicle(null);
       // void navigate('/history');
     } catch (error) {
       const text = error instanceof Error ? error.message : 'Не удалось создать заказ';
@@ -203,7 +215,16 @@ export default function MainPage(): React.JSX.Element {
   };
   const handleClearRoute = (): void => {
     dispatch(clearRoute());
+    setSelectedVehicle(null);
+    setPriceState({ loading: false, error: null, text: null }); 
   };
+
+  const priceText =
+    priceState.error
+      ? 'Ошибка расчёта'
+      : priceState.loading
+      ? 'Рассчитываем стоимость...'
+      : priceState.text || undefined;
 
   return (
     <div className="app">
@@ -228,6 +249,13 @@ export default function MainPage(): React.JSX.Element {
         onSubmit={handleOrderSubmit}
         isExpanded={isFormExpanded}
         onExpandChange={setIsFormExpanded}
+        onVehicleChange={setSelectedVehicle} 
+        priceText={priceText}
+      />
+      <CostCalculation
+        distance={routeInfo?.distance}
+        vehicle={selectedVehicle}
+        onChange={setPriceState}
       />
     </div>
   );

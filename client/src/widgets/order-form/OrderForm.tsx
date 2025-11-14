@@ -2,7 +2,7 @@ import { Form, Input, Select } from 'antd';
 import { useEffect, useMemo, useState, useRef } from 'react';
 import type { ActivePoint, RouteInfo, Suggestion } from '@/entities/maps/types/MapTypes';
 
-type VehicleType = 'Седан/Кроссовер' | 'Внедорожник';
+type VehicleType = 'Кроссовер' | 'Седан' | 'Внедорожник';
 
 export type OrderFormValues = {
   vehicle: VehicleType | null;
@@ -30,6 +30,8 @@ type OrderFormProps = {
   onSubmit: (values: OrderFormValues) => void | Promise<void>;
   isExpanded?: boolean;
   onExpandChange?: (expanded: boolean) => void;
+  onVehicleChange?: (value: VehicleType | null) => void; 
+  priceText?: string;
 };
 
 export default function OrderForm({
@@ -51,6 +53,8 @@ export default function OrderForm({
   onSubmit,
   isExpanded: externalIsExpanded,
   onExpandChange,
+  onVehicleChange, 
+  priceText,
 }: OrderFormProps): React.JSX.Element | null {
   const [form] = Form.useForm<OrderFormValues>();
   const [internalIsExpanded, setInternalIsExpanded] = useState(false);
@@ -81,6 +85,7 @@ export default function OrderForm({
   const handleClear = (): void => {
     form.resetFields();
     onClear();
+    onVehicleChange?.(null);
   };
 
   const handleValuesChange = (changed: Partial<OrderFormValues>): void => {
@@ -89,6 +94,9 @@ export default function OrderForm({
     }
     if (changed.toAddress !== undefined) {
       onToChange(changed.toAddress);
+    }
+    if (Object.prototype.hasOwnProperty.call(changed, 'vehicle')) {
+      onVehicleChange?.(changed.vehicle ?? null); 
     }
   };
 
@@ -165,6 +173,7 @@ export default function OrderForm({
             <span>{routeInfo.time}</span>
           </div>
         )}
+         {priceText && <div className="route-info">{priceText}</div>}
       </header>
 
       <Form<OrderFormValues>
