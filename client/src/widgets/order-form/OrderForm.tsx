@@ -1,4 +1,4 @@
-import { Form, Input, Select } from 'antd';
+import { Form, Input, Select, Tooltip } from 'antd';
 import { useEffect, useMemo, useState, useRef } from 'react';
 import type { ActivePoint, RouteInfo, Suggestion } from '@/entities/maps/types/MapTypes';
 
@@ -61,6 +61,61 @@ export default function OrderForm({
   const [isDragging, setIsDragging] = useState(false);
   const startY = useRef(0);
   const currentY = useRef(0);
+  const vehicleValue = Form.useWatch('vehicle', form) as VehicleType | null;
+
+  const parseDistanceKm = (distance?: string | null): number | null => {
+    if (!distance) return null;
+    const kmMatch = distance.match(/(\d+(?:[.,]\d+)?)\s*км/i);
+    const mMatch = distance.match(/(\d+)\s*м/i);
+    let km = kmMatch ? parseFloat(kmMatch[1].replace(',', '.')) : 0;
+    const meters = mMatch ? parseInt(mMatch[1], 10) : 0;
+    if (!kmMatch && !mMatch) return null;
+    km = meters >= 500 ? Math.ceil(km) : Math.floor(km);
+    return Math.max(0, km);
+  };
+
+  const formatRub = (n: number): string => `${n.toLocaleString('ru-RU')} ₽`;
+
+  const priceTooltip = useMemo(() => {
+    if (!routeInfo) return null;
+    const distanceKm = parseDistanceKm(routeInfo.distance);
+    const vehicle = vehicleValue;
+    if (!distanceKm || !vehicle) return null;
+
+    const base = 4000;
+    const isSUV = vehicle === 'Внедорожник';
+
+    let tariff = 0;
+    let distanceLabel = '';
+
+    if (isSUV) {
+      if (distanceKm <= 15) {
+        tariff = 4000;
+        distanceLabel = `Тариф до 15 км`;
+      } else {
+        tariff = 3500 + 550 * (distanceKm - 15);
+        distanceLabel = `Стоимость за дистанцию свыше 15 км`;
+      }
+    } else {
+      if (distanceKm <= 15) {
+        tariff = 3500;
+        distanceLabel = `Тариф до 15 км`;
+      } else {
+        tariff = 3000 + 500 * (distanceKm - 15);
+        distanceLabel = `Стоимость за дистанцию свыше 15 км`;
+      }
+    }
+
+    const total = base + tariff;
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div>Выезд эвакуатора для {vehicle}: {formatRub(base)}</div>
+        <div>{distanceLabel}: {formatRub(tariff)}</div>
+        <div><strong>Итого: {formatRub(total)}</strong></div>
+      </div>
+    );
+  }, [vehicleValue, routeInfo]);
 
   const isExpanded = externalIsExpanded ?? internalIsExpanded;
   const setIsExpanded = (value: boolean): void => {
@@ -173,7 +228,11 @@ export default function OrderForm({
             <span>{routeInfo.time}</span>
           </div>
         )}
-         {priceText && <div className="route-info">{priceText}</div>}
+         {priceText && (
+          <Tooltip title={priceTooltip} placement="top">
+            <div className="route-info" style={{ cursor: priceTooltip ? 'help' : 'default' }}>{priceText}</div>
+          </Tooltip>
+        )}
       </header>
 
       <Form<OrderFormValues>

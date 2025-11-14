@@ -1,6 +1,7 @@
 import { loginUsers } from '@/entities/user/model/thunks';
 import { useAppDispatch } from '@/shared/hooks';
 import React from 'react';
+import './SigninPage.css';
 
 export default function SigninPage(): React.JSX.Element {
   const dispatch = useAppDispatch();
@@ -21,7 +22,7 @@ export default function SigninPage(): React.JSX.Element {
 
   return (
     <div>
-      <h2>SignIn</h2>
+      <h2>Вход</h2>
       <form onSubmit={submitHandler}>
         <label>
           Ваш email

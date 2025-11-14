@@ -76,10 +76,11 @@ const NavBar: React.FC = () => {
       style={{
         position: 'sticky',
         top: 0,
-        zIndex: 1,
-        width: '100vw',
+        zIndex: 1000,
+        width: '100%',
         display: 'flex',
         alignItems: 'center',
+        boxShadow: '0 8px 24px rgba(15, 37, 68, 0.12)',
       }}
     >
       <div

@@ -21,7 +21,7 @@ export default function SigninPage(): React.JSX.Element {
 
   return (
     <div>
-      <h2>SignIn</h2>
+      {/* <h2>Вход</h2> */}
       <form onSubmit={submitHandler}>
         <label>
           Ваш email
