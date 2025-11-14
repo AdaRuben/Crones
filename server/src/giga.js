@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const httpsAgent = new Agent({
   rejectUnauthorized: false,
-}); 
+});
 
 const client = new GigaChat({
   timeout: 10000,
@@ -37,13 +37,13 @@ const SYSTEM_PROMPT = `Ты — агент, который рассчитыва�
 
 Верни ответ строго в формате:
 "Стоимость услуги: Х рублей."
-`; 
+`;
 
 app.post('/api/chat', async (req, res) => {
   try {
     const { message } = req.body;
     if (!message) {
-      return res.status(400).json({ error: 'Сообщение нет' }); 
+      return res.status(400).json({ error: 'Сообщение нет' });
     }
 
     const response = await client.chat({
@@ -51,15 +51,16 @@ app.post('/api/chat', async (req, res) => {
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: message },
       ],
-    }); 
+    });
 
-    const aiResponse = response.choices?.[0]?.message?.content || 'Ошибка генерации ответа'; 
-    res.json(aiResponse); 
+    const aiResponse =
+      response.choices?.[0]?.message?.content || 'Ошибка генерации ответа';
+    res.json(aiResponse);
   } catch (error) {
     console.error('Детальная ошибка:', error);
     return res.status(500).json({
       error: 'Ошибка сервера при обработке запроса',
       details: error.message,
-    }); 
+    });
   }
 });

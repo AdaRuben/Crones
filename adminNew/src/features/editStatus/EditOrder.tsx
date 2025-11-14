@@ -69,8 +69,35 @@ export default function EditOrder({
     console.log('🔵 handleSave вызван');
     try {
       console.log('🔵 Валидация формы...');
-      const values = await form.validateFields();
+      const values = await form.validateFields() as {
+        from: string;
+        to: string;
+        totalCost: string;
+        status: Order['status'];
+        isPaid: boolean;
+        vehicle: string;
+        adminComment: string;
+        driverId?: number;
+      };
       console.log('🔵 Значения формы:', values);
+
+      // Validation: cannot move new -> finished (must go through in process)
+      if (editing.status === 'new' && values.status === 'finished') {
+        notification.error({ message: 'Новый заказ нельзя сразу перевести в статус Завершен. Сначала переведите в статус "В процессе".' });
+        return;
+      }
+
+      // Validation: finished requires payment
+      if (values.status === 'finished' && !values.isPaid) {
+        notification.error({ message: 'Нельзя завершить неоплаченный заказ.' });
+        return;
+      }
+
+      // Validation: cannot move finished -> new
+      if (editing.status === 'finished' && values.status === 'new') {
+        notification.error({ message: 'Завершенный заказ нельзя перевести в статус Новый.' });
+        return;
+      }
 
       const orderBody: newOrder = {
         customerId: editing.customerId,
@@ -166,10 +193,7 @@ export default function EditOrder({
           </Select>
         </Form.Item>
 
-        <Form.Item
-          label="Водитель"
-          name="driverId"
-        >
+        <Form.Item label="Водитель" name="driverId">
           <Select
             style={{ width: '100%' }}
             placeholder="Выберите водителя"

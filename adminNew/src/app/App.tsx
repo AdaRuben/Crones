@@ -1,17 +1,17 @@
 import type { JSX } from 'react';
 import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
+import { App as AntApp } from 'antd';
 import AppRoutes from './routes/AppRoutes';
 import { store } from './store/store';
 
-
-
 function App(): JSX.Element {
-
   return (
-     <BrowserRouter>
+    <BrowserRouter>
       <Provider store={store}>
-        <AppRoutes/>
+        <AntApp>
+          <AppRoutes />
+        </AntApp>
       </Provider>
     </BrowserRouter>
   );
