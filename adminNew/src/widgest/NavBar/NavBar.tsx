@@ -13,7 +13,7 @@ const NavBar: React.FC = () => {
   const dispatch = useAppDispatch();
   const isLogin = useAppSelector((state) => state.user.isLogin);
 
-  const menuItems = useMemo<MenuProps['items']>(() => {
+  const leftMenuItems = useMemo<MenuProps['items']>(() => {
     if (!isLogin) {
       return [
         {
@@ -36,6 +36,15 @@ const NavBar: React.FC = () => {
         key: '/support',
         label: 'Чаты поддержки',
       },
+    ];
+  }, [isLogin]);
+
+  const rightMenuItems = useMemo<MenuProps['items']>(() => {
+    if (!isLogin) {
+      return [];
+    }
+
+    return [
       {
         key: 'logout',
         label: 'Выйти',
@@ -68,7 +77,7 @@ const NavBar: React.FC = () => {
         position: 'sticky',
         top: 0,
         zIndex: 1,
-        width: '100%',
+        width: '100vw',
         display: 'flex',
         alignItems: 'center',
       }}
@@ -77,16 +86,26 @@ const NavBar: React.FC = () => {
         className="admin-logo"
         style={{ marginRight: 24, fontWeight: 600, color: '#ffffff' }}
       >
-        CRONES ADMIN
+        КРОКОВОЗ ADMIN
       </div>
       <Menu
         theme="dark"
         mode="horizontal"
         selectedKeys={[selectedKey]}
-        items={menuItems}
+        items={leftMenuItems}
         onClick={handleMenuClick}
         style={{ flex: 1, minWidth: 0 }}
       />
+      {isLogin && (
+        <Menu
+          theme="dark"
+          mode="horizontal"
+          selectedKeys={[]}
+          items={rightMenuItems}
+          onClick={handleMenuClick}
+          style={{ minWidth: 0 }}
+        />
+      )}
     </Header>
   );
 };

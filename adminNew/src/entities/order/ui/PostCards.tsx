@@ -143,54 +143,64 @@ export default function OrderCards({
   return (
     <>
       <Flex gap="middle" align="start" vertical>
-        <Card style={{ minWidth: 300 }}>
+        <Card style={{ width: '800px', position: 'relative' }}>
+          <Button
+            onClick={handleEdit}
+            style={{ position: 'absolute', top: 16, right: 16, zIndex: 1 }}
+            icon={<EditOutlined />}
+          />
           <Card.Meta
             title={`Заказ №${order.id.toString()}`}
             description={
               <>
-
-                <Button onClick={handleEdit}><EditOutlined /></Button>
                 {visibleEdit ?
                 <EditOrder setVisibleEdit={setVisibleEdit} editing={editing}/>
                 :
-                <>
-                {order.Customer && (
-                  <div style={{ marginBottom: 16, padding: 12, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
-                    <strong>Информация о заказчике:</strong>
-                    <p style={{ margin: '4px 0' }}>Имя: {order.Customer.name}</p>
-                    <p style={{ margin: '4px 0' }}>Телефон: {order.Customer.phoneNumber}</p>
-                  </div>
-                )}
-                {order.Driver && (
-                  <div style={{ marginBottom: 16, padding: 12, backgroundColor: '#e6f7ff', borderRadius: 4 }}>
-                    <strong>Информация о водителе:</strong>
-                    <p style={{ margin: '4px 0' }}>Имя: {order.Driver.name}</p>
-                    <p style={{ margin: '4px 0' }}>Телефон: {order.Driver.phoneNumber}</p>
-                  </div>
-                )}
-                <p>Откуда: {order.from}</p>
-                <p>Куда: {order.to}</p>
-                <p>Стоимость: {order.totalCost}</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span>Статус заявки:</span>
-                  <Select
-                  value={order.status}
-                  style={{ width: 150 }}
-                  onChange={handleStatusChange}
-                  >
-                    <Select.Option value="new">Новый</Select.Option>
-                    <Select.Option value="in process">В процессе</Select.Option>
-                    <Select.Option value="finished">Завершен</Select.Option>
-                    <Select.Option value="cancelled">Отменен</Select.Option>
-                    </Select>
+                <div style={{ display: 'flex', gap: 24 }}>
+                  {/* Левая колонка - основная информация */}
+                  <div style={{ flex: 1 }}>
+                    <p>Откуда: {order.from}</p>
+                    <p>Куда: {order.to}</p>
+                    <p>Стоимость: {order.totalCost}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span>Статус заявки:</span>
+                      <Select
+                        value={order.status}
+                        style={{ width: 150 }}
+                        onChange={handleStatusChange}
+                      >
+                        <Select.Option value="new">Новый</Select.Option>
+                        <Select.Option value="in process">В процессе</Select.Option>
+                        <Select.Option value="finished">Завершен</Select.Option>
+                        <Select.Option value="cancelled">Отменен</Select.Option>
+                      </Select>
                     </div>
-                <p>Оплачено: {order.isPaid ? 'Да' : 'Нет'}</p>
-                <p>Тип кузова: {order.vehicle}</p>
-                <p>Комментарий от заказчика: {order.customerComment}</p>
-                <p>Примечание администратора: {order.adminComment}</p>
-                <p>Дата завершения: {formatDate(order.finishedAt)}</p>
-                <p>Дата создания: {formatDate(order.createdAt)}</p>
-                </>
+                    <p>Оплачено: {order.isPaid ? 'Да' : 'Нет'}</p>
+                    <p>Тип кузова: {order.vehicle}</p>
+                    <p>Комментарий от заказчика: {order.customerComment}</p>
+                    <p>Примечание администратора: {order.adminComment}</p>
+                    <p>Дата завершения: {formatDate(order.finishedAt)}</p>
+                    <p>Дата создания: {formatDate(order.createdAt)}</p>
+                  </div>
+
+                  {/* Правая колонка - информация о заказчике и водителе */}
+                  <div style={{ width: 300 }}>
+                    {order.Customer && (
+                      <div style={{ marginBottom: 16, padding: 12, backgroundColor: '#f5f5f5', borderRadius: 4 }}>
+                        <strong>Информация о заказчике:</strong>
+                        <p style={{ margin: '4px 0' }}>Имя: {order.Customer.name}</p>
+                        <p style={{ margin: '4px 0' }}>Телефон: {order.Customer.phoneNumber}</p>
+                      </div>
+                    )}
+                    {order.Driver && (
+                      <div style={{ marginBottom: 16, padding: 12, backgroundColor: '#e6f7ff', borderRadius: 4 }}>
+                        <strong>Информация о водителе:</strong>
+                        <p style={{ margin: '4px 0' }}>Имя: {order.Driver.name}</p>
+                        <p style={{ margin: '4px 0' }}>Телефон: {order.Driver.phoneNumber}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               }
               </>
             }
