@@ -68,7 +68,7 @@ const NavBar: React.FC = () => {
         position: 'sticky',
         top: 0,
         zIndex: 1,
-        width: '100%',
+        width: '100vw',
         display: 'flex',
         alignItems: 'center',
       }}
@@ -77,7 +77,7 @@ const NavBar: React.FC = () => {
         className="admin-logo"
         style={{ marginRight: 24, fontWeight: 600, color: '#ffffff' }}
       >
-        CRONES ADMIN
+        КРОКОВОЗ ADMIN
       </div>
       <Menu
         theme="dark"
