@@ -1,6 +1,6 @@
 import axiosInstance, { setAccessToken } from '@/shared/axiosInstance';
 import { authResponseSchema } from '../model/schema';
-import type { loginUser, newUser, User } from '../model/type';
+import type { authResponse, loginUser, newUser, User } from '../model/type';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class UserService {
@@ -32,7 +32,7 @@ class UserService {
     }
   }
 
-    static async loginUser(user: loginUser): Promise<loginUser> {
+    static async loginUser(user: loginUser): Promise<authResponse> {
         try {
       const res = await axiosInstance.post('/admin/signin', user);
       const parsed = authResponseSchema.parse(res.data);
@@ -40,7 +40,7 @@ class UserService {
       return parsed;
         } catch (error) {
             if (error instanceof Error) {
-            console.log(error.message); 
+            console.log(error.message);
         }
         throw error;
     }
